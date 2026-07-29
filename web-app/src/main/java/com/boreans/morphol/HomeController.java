@@ -27,6 +27,7 @@ public class HomeController {
         Long sessionId = (Long) session.getAttribute("sessionId");
         DeclensionSession record = repository.findById(sessionId).orElseThrow();
 
+        record.setCurrentWord(state.getText());
         record.setThirdPossessive(state.isThirdPossessive());
         record.setGenitive(state.isGenitive());
         record.setPlural(state.isPlural());
@@ -74,7 +75,34 @@ public class HomeController {
         model.addAttribute("canPossessive", TurkishRules.canAddPossessive(state));
         model.addAttribute("canCopula", TurkishRules.canAddCopula(state));
 
+        model.addAttribute("history", repository.findAll());
+
         return "word";
+    }
+    
+    @GetMapping("/session/{id}")
+    public String reopenSession(@PathVariable Long id, HttpSession session) {
+        DeclensionSession record = repository.findById(id).orElseThrow();
+
+        WordState state = new WordState(record.getCurrentWord());
+        state.setThirdPossessive(record.isThirdPossessive());
+        state.setGenitive(record.isGenitive());
+        state.setPlural(record.isPlural());
+        state.setHasCase(record.isHasCase());
+        state.setHasHardCase(record.isHasHardCase());
+        state.setHasCopula(record.isHasCopula());
+        state.setHasPast(record.isHasPast());
+
+        session.setAttribute("wordState", state);
+        session.setAttribute("sessionId", record.getId());
+
+        return "redirect:/word";
+    }
+
+    @PostMapping("/session/{id}/delete")
+    public String deleteSession(@PathVariable Long id) {
+        repository.deleteById(id);
+        return "redirect:/word";
     }
     
     @PostMapping("/suffix/plural")
