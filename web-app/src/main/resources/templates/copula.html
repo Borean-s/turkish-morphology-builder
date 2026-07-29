@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Choose Copula Person</title>
+</head>
+<body>
+    <h1 th:text="${word}">placeholder</h1>
+    <p>Choose copula person:</p>
+
+    <form action="/suffix/copula/1" method="post"><button type="submit">1st sg</button></form>
+    <form action="/suffix/copula/2" method="post"><button type="submit">1st pl</button></form>
+    <form action="/suffix/copula/3" method="post"><button type="submit">2nd sg</button></form>
+    <form action="/suffix/copula/4" method="post"><button type="submit">2nd pl</button></form>
+    <form action="/suffix/copula/5" method="post"><button type="submit">3rd sg</button></form>
+    <form action="/suffix/copula/6" method="post"><button type="submit">3rd pl</button></form>
+</body>
+</html>

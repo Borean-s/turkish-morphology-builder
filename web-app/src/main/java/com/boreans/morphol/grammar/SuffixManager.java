@@ -68,14 +68,7 @@ public static void conjugateIt(WordState word, int choice, char v, Scanner s) {
 				addGenitive(word, v, s);
 				break;
 				
-			case 7 : // possessive
-				
-				if(!TurkishRules.canAddPossessive(word)) {
-				    System.out.println("Possessive cannot be added.");
-				    return;
-				}
-
-				addPossessive(word, v, s);
+			case 7 : // possessive possessive — handled separately via addPossessive(word, v, choice) directly from the Controller
 				break;
 				
 			case 8 : //plural
@@ -98,14 +91,7 @@ public static void conjugateIt(WordState word, int choice, char v, Scanner s) {
 				addPast(word, v, s);
 				break;
 				
-			case 10 : //copula
-				
-				if(!TurkishRules.canAddCopula(word)) {
-				    System.out.println("Copula cannot be added.");
-				    return;
-				}
-				
-				addCopula(word, v, s);
+			case 10 : //copula // handled separately via addCopula(word, v, choice) directly from the Controller
 				break;
 				
 		}
@@ -146,12 +132,8 @@ static void addGenitive(WordState word, char v, Scanner s){
 		}
 }
 
-static void addPossessive(WordState word, char v, Scanner s){
-	System.out.printf("1)  1st sg      "); System.out.printf("2)  1st pl\n");
-	System.out.printf("3)  2st sg      "); System.out.printf("4)  2st pl\n");
-	System.out.printf("5)  3st sg      "); System.out.printf("6)  3st pl\n");
-	int genChoice;
-	genChoice = s.nextInt();
+public static void addPossessive(WordState word, char v, int genChoice){
+	
 	switch(genChoice) {
 		case 1 : 
 			if(TurkishHelper.EndingWithVowel(word)) {
@@ -311,15 +293,10 @@ static void addPast(WordState word, char v, Scanner s){
 	}
 }
 
-static void addCopula(WordState word, char v, Scanner s) {
+public static void addCopula(WordState word, char v, int copChoice) {
 	word.hasCopula = true;
 	
-	System.out.printf("1)  1st sg      "); System.out.printf("2)  1st pl\n");
-	System.out.printf("3)  2st sg      "); System.out.printf("4)  2st pl\n");
-	System.out.printf("5)  3st sg      "); System.out.printf("6)  3st pl\n");
-	int copChoice;
-	copChoice = s.nextInt();
-
+	
 	if(!(word.hasPast)) {
 	
 	switch(copChoice) {

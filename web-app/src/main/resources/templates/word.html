@@ -5,11 +5,40 @@
     <title>Turkish Morphology Builder</title>
 </head>
 <body>
-    <h1 th:text="${word}">placeholder</h1>
-	
-	<form action="/suffix/plural" method="post">
+	<h1 th:text="${word}">placeholder</h1>
+
+	    <form action="/suffix/plural" method="post">
 	        <button type="submit">Plural</button>
 	    </form>
-	
+	    <form action="/suffix/accusative" method="post">
+	        <button type="submit">Accusative</button>
+	    </form>
+	    <form action="/suffix/dative" method="post">
+	        <button type="submit">Dative</button>
+	    </form>
+	    <form action="/suffix/locative" method="post">
+	        <button type="submit">Locative</button>
+	    </form>
+	    <form action="/suffix/ablative" method="post">
+	        <button type="submit">Ablative</button>
+	    </form>
+	    <form action="/suffix/instrumental" method="post">
+	        <button type="submit">Instrumental</button>
+	    </form>
+	    <form action="/suffix/genitive" method="post">
+	        <button type="submit">Genitive</button>
+	    </form>
+	    <form action="/suffix/past" method="post">
+	        <button type="submit">Past</button>
+	    </form>
+		
+		<form action="/suffix/possessive" method="get">
+		       <button type="submit">Possessive</button>
+		   </form>
+		   
+		   <form action="/suffix/copula" method="get">
+		           <button type="submit">Copula</button>
+		   </form>
+		
 </body>
 </html>

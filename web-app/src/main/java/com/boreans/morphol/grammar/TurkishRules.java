@@ -23,7 +23,7 @@ public class TurkishRules {
         return true;
     }
 
-    static boolean canAddPossessive(WordState word){
+    public static boolean canAddPossessive(WordState word){
         if(word.thirdPossessive) return false;
         if(word.genitive) return false;
         if(word.hasCase) return false;
@@ -49,7 +49,7 @@ public class TurkishRules {
         return true;
     }
 
-    static boolean canAddCopula(WordState word){
+    public static boolean canAddCopula(WordState word){
         if(word.hasCopula) return false;
         if(word.hasHardCase) return false;
         return true;

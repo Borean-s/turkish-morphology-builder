@@ -9,6 +9,8 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.ui.Model;
 import com.boreans.morphol.grammar.TurkishHelper;
 import com.boreans.morphol.grammar.SuffixManager;
+import org.springframework.web.bind.annotation.PathVariable;
+import com.boreans.morphol.grammar.TurkishRules;
 
 @Controller
 public class HomeController {
@@ -40,4 +42,84 @@ public class HomeController {
         return "redirect:/word";
     }
     
+    @PostMapping("/suffix/accusative")
+    public String addAccusative(HttpSession session) {
+        WordState state = (WordState) session.getAttribute("wordState");
+        SuffixManager.conjugateIt(state, 1, TurkishHelper.findLastVowel(state), null);
+        return "redirect:/word";
+    }
+
+    @PostMapping("/suffix/dative")
+    public String addDative(HttpSession session) {
+        WordState state = (WordState) session.getAttribute("wordState");
+        SuffixManager.conjugateIt(state, 2, TurkishHelper.findLastVowel(state), null);
+        return "redirect:/word";
+    }
+
+    @PostMapping("/suffix/locative")
+    public String addLocative(HttpSession session) {
+        WordState state = (WordState) session.getAttribute("wordState");
+        SuffixManager.conjugateIt(state, 3, TurkishHelper.findLastVowel(state), null);
+        return "redirect:/word";
+    }
+
+    @PostMapping("/suffix/ablative")
+    public String addAblative(HttpSession session) {
+        WordState state = (WordState) session.getAttribute("wordState");
+        SuffixManager.conjugateIt(state, 4, TurkishHelper.findLastVowel(state), null);
+        return "redirect:/word";
+    }
+
+    @PostMapping("/suffix/instrumental")
+    public String addInstrumental(HttpSession session) {
+        WordState state = (WordState) session.getAttribute("wordState");
+        SuffixManager.conjugateIt(state, 5, TurkishHelper.findLastVowel(state), null);
+        return "redirect:/word";
+    }
+
+    @PostMapping("/suffix/genitive")
+    public String addGenitive(HttpSession session) {
+        WordState state = (WordState) session.getAttribute("wordState");
+        SuffixManager.conjugateIt(state, 6, TurkishHelper.findLastVowel(state), null);
+        return "redirect:/word";
+    }
+
+    @PostMapping("/suffix/past")
+    public String addPast(HttpSession session) {
+        WordState state = (WordState) session.getAttribute("wordState");
+        SuffixManager.conjugateIt(state, 9, TurkishHelper.findLastVowel(state), null);
+        return "redirect:/word";
+    }
+    
+    @GetMapping("/suffix/possessive")
+    public String choosePossessive(HttpSession session, Model model) {
+        WordState state = (WordState) session.getAttribute("wordState");
+        model.addAttribute("word", state.getText());
+        return "possessive";
+    }
+
+    @PostMapping("/suffix/possessive/{choice}")
+    public String addPossessive(@PathVariable int choice, HttpSession session) {
+        WordState state = (WordState) session.getAttribute("wordState");
+        if (TurkishRules.canAddPossessive(state)) {
+            SuffixManager.addPossessive(state, TurkishHelper.findLastVowel(state), choice);
+        }
+        return "redirect:/word";
+    }
+
+    @GetMapping("/suffix/copula")
+    public String chooseCopula(HttpSession session, Model model) {
+        WordState state = (WordState) session.getAttribute("wordState");
+        model.addAttribute("word", state.getText());
+        return "copula";
+    }
+
+    @PostMapping("/suffix/copula/{choice}")
+    public String addCopula(@PathVariable int choice, HttpSession session) {
+        WordState state = (WordState) session.getAttribute("wordState");
+        if (TurkishRules.canAddCopula(state)) {
+            SuffixManager.addCopula(state, TurkishHelper.findLastVowel(state), choice);
+        }
+        return "redirect:/word";
+    }
 }
