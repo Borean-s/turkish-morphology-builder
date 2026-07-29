@@ -41,4 +41,15 @@ public class WordState {
     public void setHasPast(boolean v) { this.hasPast = v; }
     public void setText(String text) { this.text = text; }
     
+    public WordState(WordState other) {
+        this.text = other.text;
+        this.thirdPossessive = other.thirdPossessive;
+        this.genitive = other.genitive;
+        this.plural = other.plural;
+        this.hasCase = other.hasCase;
+        this.hasHardCase = other.hasHardCase;
+        this.hasCopula = other.hasCopula;
+        this.hasPast = other.hasPast;
+    }
+    
 }

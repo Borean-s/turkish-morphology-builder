@@ -13,6 +13,11 @@
 		<form action="/" method="get">
 		            <button type="submit">New Word</button>
 		        </form>
+				
+				<form action="/undo" method="post">
+				            <button type="submit">Undo</button>
+				        </form>
+				
         <form th:if="${canPlural}" action="/suffix/plural" method="post">
             <button type="submit">Plural</button>
         </form>

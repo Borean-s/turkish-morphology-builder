@@ -38,6 +38,26 @@ public class HomeController {
 
         repository.save(record);
     }
+    
+    private void pushUndo(HttpSession session, WordState state) {
+        java.util.Deque<WordState> stack = (java.util.Deque<WordState>) session.getAttribute("undoStack");
+        if (stack == null) {
+            stack = new java.util.ArrayDeque<>();
+        }
+        stack.push(new WordState(state));
+        session.setAttribute("undoStack", stack);
+    }
+    
+    @PostMapping("/undo")
+    public String undo(HttpSession session) {
+        java.util.Deque<WordState> stack = (java.util.Deque<WordState>) session.getAttribute("undoStack");
+        if (stack != null && !stack.isEmpty()) {
+            WordState previous = stack.pop();
+            session.setAttribute("wordState", previous);
+            syncSession(session, previous);
+        }
+        return "redirect:/word";
+    }
 
     @GetMapping("/")
     public String home(Model model) {
@@ -49,6 +69,7 @@ public class HomeController {
     public String start(@RequestParam String word, HttpSession session) {
         WordState state = new WordState(word);
         session.setAttribute("wordState", state);
+        session.setAttribute("undoStack", new java.util.ArrayDeque<WordState>());
 
         DeclensionSession record = new DeclensionSession();
         record.setOriginalWord(word);
@@ -109,6 +130,7 @@ public class HomeController {
     @PostMapping("/suffix/plural")
     public String addPlural(HttpSession session) {
         WordState state = (WordState) session.getAttribute("wordState");
+        pushUndo(session, state);
         char lastVowel = TurkishHelper.findLastVowel(state);
         SuffixManager.conjugateIt(state, 8, lastVowel, null);
         syncSession(session, state);
@@ -118,6 +140,7 @@ public class HomeController {
     @PostMapping("/suffix/accusative")
     public String addAccusative(HttpSession session) {
         WordState state = (WordState) session.getAttribute("wordState");
+        pushUndo(session, state);
         SuffixManager.conjugateIt(state, 1, TurkishHelper.findLastVowel(state), null);
         syncSession(session, state);
         return "redirect:/word";
@@ -126,6 +149,7 @@ public class HomeController {
     @PostMapping("/suffix/dative")
     public String addDative(HttpSession session) {
         WordState state = (WordState) session.getAttribute("wordState");
+        pushUndo(session, state);
         SuffixManager.conjugateIt(state, 2, TurkishHelper.findLastVowel(state), null);
         syncSession(session, state);
         return "redirect:/word";
@@ -134,6 +158,7 @@ public class HomeController {
     @PostMapping("/suffix/locative")
     public String addLocative(HttpSession session) {
         WordState state = (WordState) session.getAttribute("wordState");
+        pushUndo(session, state);
         SuffixManager.conjugateIt(state, 3, TurkishHelper.findLastVowel(state), null);
         syncSession(session, state);
         return "redirect:/word";
@@ -142,6 +167,7 @@ public class HomeController {
     @PostMapping("/suffix/ablative")
     public String addAblative(HttpSession session) {
         WordState state = (WordState) session.getAttribute("wordState");
+        pushUndo(session, state);
         SuffixManager.conjugateIt(state, 4, TurkishHelper.findLastVowel(state), null);
         syncSession(session, state);
         return "redirect:/word";
@@ -150,6 +176,7 @@ public class HomeController {
     @PostMapping("/suffix/instrumental")
     public String addInstrumental(HttpSession session) {
         WordState state = (WordState) session.getAttribute("wordState");
+        pushUndo(session, state);
         SuffixManager.conjugateIt(state, 5, TurkishHelper.findLastVowel(state), null);
         syncSession(session, state);
         return "redirect:/word";
@@ -158,6 +185,7 @@ public class HomeController {
     @PostMapping("/suffix/genitive")
     public String addGenitive(HttpSession session) {
         WordState state = (WordState) session.getAttribute("wordState");
+        pushUndo(session, state);
         SuffixManager.conjugateIt(state, 6, TurkishHelper.findLastVowel(state), null);
         syncSession(session, state);
         return "redirect:/word";
@@ -166,6 +194,7 @@ public class HomeController {
     @PostMapping("/suffix/past")
     public String addPast(HttpSession session) {
         WordState state = (WordState) session.getAttribute("wordState");
+        pushUndo(session, state);
         SuffixManager.conjugateIt(state, 9, TurkishHelper.findLastVowel(state), null);
         syncSession(session, state);
         return "redirect:/word";
@@ -182,6 +211,7 @@ public class HomeController {
     public String addPossessive(@PathVariable int choice, HttpSession session) {
         WordState state = (WordState) session.getAttribute("wordState");
         if (TurkishRules.canAddPossessive(state)) {
+            pushUndo(session, state);
             SuffixManager.addPossessive(state, TurkishHelper.findLastVowel(state), choice);
             syncSession(session, state);
         }
@@ -199,6 +229,7 @@ public class HomeController {
     public String addCopula(@PathVariable int choice, HttpSession session) {
         WordState state = (WordState) session.getAttribute("wordState");
         if (TurkishRules.canAddCopula(state)) {
+            pushUndo(session, state);
             SuffixManager.addCopula(state, TurkishHelper.findLastVowel(state), choice);
             syncSession(session, state);
         }
