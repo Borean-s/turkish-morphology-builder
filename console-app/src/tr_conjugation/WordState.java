@@ -2,6 +2,8 @@ package tr_conjugation;
 
 import java.util.ArrayList;
 
+
+	
 public class WordState {
 
 	    String text;
