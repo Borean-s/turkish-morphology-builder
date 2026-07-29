@@ -5,40 +5,37 @@
     <title>Turkish Morphology Builder</title>
 </head>
 <body>
-	<h1 th:text="${word}">placeholder</h1>
+    <h1 th:text="${word}">placeholder</h1>
 
-	    <form action="/suffix/plural" method="post">
-	        <button type="submit">Plural</button>
-	    </form>
-	    <form action="/suffix/accusative" method="post">
-	        <button type="submit">Accusative</button>
-	    </form>
-	    <form action="/suffix/dative" method="post">
-	        <button type="submit">Dative</button>
-	    </form>
-	    <form action="/suffix/locative" method="post">
-	        <button type="submit">Locative</button>
-	    </form>
-	    <form action="/suffix/ablative" method="post">
-	        <button type="submit">Ablative</button>
-	    </form>
-	    <form action="/suffix/instrumental" method="post">
-	        <button type="submit">Instrumental</button>
-	    </form>
-	    <form action="/suffix/genitive" method="post">
-	        <button type="submit">Genitive</button>
-	    </form>
-	    <form action="/suffix/past" method="post">
-	        <button type="submit">Past</button>
-	    </form>
-		
-		<form action="/suffix/possessive" method="get">
-		       <button type="submit">Possessive</button>
-		   </form>
-		   
-		   <form action="/suffix/copula" method="get">
-		           <button type="submit">Copula</button>
-		   </form>
-		
+    <form th:if="${canPlural}" action="/suffix/plural" method="post">
+        <button type="submit">Plural</button>
+    </form>
+    <form th:if="${canAccusative}" action="/suffix/accusative" method="post">
+        <button type="submit">Accusative</button>
+    </form>
+    <form th:if="${canDative}" action="/suffix/dative" method="post">
+        <button type="submit">Dative</button>
+    </form>
+    <form th:if="${canLocative}" action="/suffix/locative" method="post">
+        <button type="submit">Locative</button>
+    </form>
+    <form th:if="${canAblative}" action="/suffix/ablative" method="post">
+        <button type="submit">Ablative</button>
+    </form>
+    <form th:if="${canInstrumental}" action="/suffix/instrumental" method="post">
+        <button type="submit">Instrumental</button>
+    </form>
+    <form th:if="${canGenitive}" action="/suffix/genitive" method="post">
+        <button type="submit">Genitive</button>
+    </form>
+    <form th:if="${canPast}" action="/suffix/past" method="post">
+        <button type="submit">Past</button>
+    </form>
+    <form th:if="${canPossessive}" action="/suffix/possessive" method="get">
+        <button type="submit">Possessive</button>
+    </form>
+    <form th:if="${canCopula}" action="/suffix/copula" method="get">
+        <button type="submit">Copula</button>
+    </form>
 </body>
 </html>

@@ -31,6 +31,18 @@ public class HomeController {
     public String showWord(HttpSession session, Model model) {
         WordState state = (WordState) session.getAttribute("wordState");
         model.addAttribute("word", state.getText());
+
+        model.addAttribute("canPlural", TurkishRules.canAddPlural(state));
+        model.addAttribute("canAccusative", TurkishRules.canAddCase(state));
+        model.addAttribute("canDative", TurkishRules.canAddCase(state));
+        model.addAttribute("canLocative", TurkishRules.canAddCase(state));
+        model.addAttribute("canAblative", TurkishRules.canAddCase(state));
+        model.addAttribute("canInstrumental", TurkishRules.canAddCase(state));
+        model.addAttribute("canGenitive", TurkishRules.canAddGenitive(state));
+        model.addAttribute("canPast", TurkishRules.canAddPast(state));
+        model.addAttribute("canPossessive", TurkishRules.canAddPossessive(state));
+        model.addAttribute("canCopula", TurkishRules.canAddCopula(state));
+
         return "word";
     }
     
