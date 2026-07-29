@@ -1,5 +1,6 @@
 package com.boreans.morphol.grammar;
 
+
 public class TurkishRules {
 
     public static boolean canAddPlural(WordState word){
