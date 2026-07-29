@@ -6,19 +6,13 @@
 </head>
 <body>
 
-    <div style="float:left; width:200px; border-right:1px solid #ccc; padding-right:10px;">
-        <h3>History</h3>
-        <div th:each="item : ${history}" style="margin-bottom:8px;">
-            <a th:href="@{/session/{id}(id=${item.id})}" th:text="${item.currentWord}">word</a>
-            <form th:action="@{/session/{id}/delete(id=${item.id})}" method="post" style="display:inline;">
-                <button type="submit">x</button>
-            </form>
-        </div>
-    </div>
+	<div th:replace="~{sidebar :: sidebar}"></div>
 
     <div style="margin-left:220px;">
         <h1 th:text="${word}">placeholder</h1>
-
+		<form action="/" method="get">
+		            <button type="submit">New Word</button>
+		        </form>
         <form th:if="${canPlural}" action="/suffix/plural" method="post">
             <button type="submit">Plural</button>
         </form>

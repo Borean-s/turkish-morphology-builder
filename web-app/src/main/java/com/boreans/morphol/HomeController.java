@@ -40,7 +40,8 @@ public class HomeController {
     }
 
     @GetMapping("/")
-    public String home() {
+    public String home(Model model) {
+        model.addAttribute("history", repository.findAll());
         return "home";
     }
 
