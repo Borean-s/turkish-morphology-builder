@@ -24,4 +24,12 @@ public class WordState {
         return text;
     }
     
+    public boolean isThirdPossessive() { return thirdPossessive; }
+    public boolean isGenitive() { return genitive; }
+    public boolean isPlural() { return plural; }
+    public boolean isHasCase() { return hasCase; }
+    public boolean isHasHardCase() { return hasHardCase; }
+    public boolean isHasCopula() { return hasCopula; }
+    public boolean isHasPast() { return hasPast; }
+    
 }
