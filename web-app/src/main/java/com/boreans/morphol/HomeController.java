@@ -5,6 +5,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 import jakarta.servlet.http.HttpSession;
 import org.springframework.ui.Model;
 import com.boreans.morphol.grammar.TurkishHelper;
@@ -37,6 +39,27 @@ public class HomeController {
         record.setHasPast(state.isHasPast());
 
         repository.save(record);
+    }
+    
+    @GetMapping("/api/word")
+    @ResponseBody
+    public WordStateResponse getWordJson(HttpSession session) {
+        WordState state = (WordState) session.getAttribute("wordState");
+
+        WordStateResponse response = new WordStateResponse();
+        response.word = state.getText();
+        response.canPlural = TurkishRules.canAddPlural(state);
+        response.canAccusative = TurkishRules.canAddCase(state);
+        response.canDative = TurkishRules.canAddCase(state);
+        response.canLocative = TurkishRules.canAddCase(state);
+        response.canAblative = TurkishRules.canAddCase(state);
+        response.canInstrumental = TurkishRules.canAddCase(state);
+        response.canGenitive = TurkishRules.canAddGenitive(state);
+        response.canPast = TurkishRules.canAddPast(state);
+        response.canPossessive = TurkishRules.canAddPossessive(state);
+        response.canCopula = TurkishRules.canAddCopula(state);
+
+        return response;
     }
     
     private void pushUndo(HttpSession session, WordState state) {
