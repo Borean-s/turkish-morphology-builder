@@ -41,26 +41,51 @@ public class HomeController {
         repository.save(record);
     }
     
-    @GetMapping("/api/word")
-    @ResponseBody
-    public WordStateResponse getWordJson(HttpSession session) {
-        WordState state = (WordState) session.getAttribute("wordState");
+    private static final java.util.Map<String, Integer> suffixCodes = java.util.Map.of(
+            "plural", 8,
+            "accusative", 1,
+            "dative", 2,
+            "locative", 3,
+            "ablative", 4,
+            "instrumental", 5,
+            "genitive", 6,
+            "past", 9
+        );
 
-        WordStateResponse response = new WordStateResponse();
-        response.word = state.getText();
-        response.canPlural = TurkishRules.canAddPlural(state);
-        response.canAccusative = TurkishRules.canAddCase(state);
-        response.canDative = TurkishRules.canAddCase(state);
-        response.canLocative = TurkishRules.canAddCase(state);
-        response.canAblative = TurkishRules.canAddCase(state);
-        response.canInstrumental = TurkishRules.canAddCase(state);
-        response.canGenitive = TurkishRules.canAddGenitive(state);
-        response.canPast = TurkishRules.canAddPast(state);
-        response.canPossessive = TurkishRules.canAddPossessive(state);
-        response.canCopula = TurkishRules.canAddCopula(state);
-
-        return response;
-    }
+        private WordStateResponse buildResponse(WordState state) {
+            WordStateResponse response = new WordStateResponse();
+            response.word = state.getText();
+            response.canPlural = TurkishRules.canAddPlural(state);
+            response.canAccusative = TurkishRules.canAddCase(state);
+            response.canDative = TurkishRules.canAddCase(state);
+            response.canLocative = TurkishRules.canAddCase(state);
+            response.canAblative = TurkishRules.canAddCase(state);
+            response.canInstrumental = TurkishRules.canAddCase(state);
+            response.canGenitive = TurkishRules.canAddGenitive(state);
+            response.canPast = TurkishRules.canAddPast(state);
+            response.canPossessive = TurkishRules.canAddPossessive(state);
+            response.canCopula = TurkishRules.canAddCopula(state);
+            return response;
+        }
+    
+    
+        @GetMapping("/api/word")
+        @ResponseBody
+        public WordStateResponse getWordJson(HttpSession session) {
+            WordState state = (WordState) session.getAttribute("wordState");
+            return buildResponse(state);
+        }
+        
+        @PostMapping("/api/suffix/{name}")
+        @ResponseBody
+        public WordStateResponse applySuffixJson(@PathVariable String name, HttpSession session) {
+            WordState state = (WordState) session.getAttribute("wordState");
+            pushUndo(session, state);
+            int code = suffixCodes.get(name);
+            SuffixManager.conjugateIt(state, code, TurkishHelper.findLastVowel(state), null);
+            syncSession(session, state);
+            return buildResponse(state);
+        }
     
     private void pushUndo(HttpSession session, WordState state) {
         java.util.Deque<WordState> stack = (java.util.Deque<WordState>) session.getAttribute("undoStack");
