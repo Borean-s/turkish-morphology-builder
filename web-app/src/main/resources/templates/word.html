@@ -49,6 +49,14 @@
             <button type="submit">Copula</button>
         </form>
     </div>
+	
+	<script>
+	        fetch('/api/word')
+	            .then(response => response.json())
+	            .then(data => {
+	                console.log(data);
+	            });
+	    </script>
 
 </body>
 </html>
