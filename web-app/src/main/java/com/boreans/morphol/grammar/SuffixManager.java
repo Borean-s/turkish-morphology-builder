@@ -104,6 +104,10 @@ public static void conjugateIt(WordState word, int choice, char v, Scanner s) {
 static void addPlural(WordState word, char v, Scanner s){
 	word.plural = true;
 	
+	if(word.specialType.equals("o_su_bu")) {
+		word.text += "n";
+	}
+	
 	if(TurkishHelper.isFront(v)) {
 		word.text += "ler";
 	}
@@ -114,6 +118,7 @@ static void addPlural(WordState word, char v, Scanner s){
 
 static void addGenitive(WordState word, char v, Scanner s){
 	word.genitive = true;
+	applyLinkingY(word);
 	
 	if(TurkishHelper.EndingWithVowel(word)) {
 		word.text += "n";
@@ -136,6 +141,7 @@ public static void addPossessive(WordState word, char v, int genChoice){
 	word.hasPossessive = true;
 	switch(genChoice) {
 		case 1 : 
+			applyLinkingY(word);
 			softenFinalConsonant(word);
 			if(TurkishHelper.EndingWithVowel(word)) {
 				word.text += "m";
@@ -155,6 +161,7 @@ public static void addPossessive(WordState word, char v, int genChoice){
 			break;
 			
 		case 2 : 
+			applyLinkingY(word);
 			softenFinalConsonant(word);
 			if(!(TurkishHelper.EndingWithVowel(word))) {
 				if(TurkishHelper.isFront(v) && TurkishHelper.isRounded(v)) {
@@ -185,6 +192,7 @@ public static void addPossessive(WordState word, char v, int genChoice){
 			break;
 			
 		case 3 : 
+			applyLinkingY(word);
 			softenFinalConsonant(word);
 			if(TurkishHelper.EndingWithVowel(word)) {
 				word.text += "n";
@@ -204,6 +212,7 @@ public static void addPossessive(WordState word, char v, int genChoice){
 			break;
 			
 		case 4 : 
+			applyLinkingY(word);
 			softenFinalConsonant(word);
 			if(!(TurkishHelper.EndingWithVowel(word))) {
 				if(TurkishHelper.isFront(v) && TurkishHelper.isRounded(v)) {
@@ -234,6 +243,7 @@ public static void addPossessive(WordState word, char v, int genChoice){
 			break;
 			
 		case 5 : 
+			applyLinkingY(word);
 			softenFinalConsonant(word);
 			word.thirdPossessive = true;
 			
@@ -485,7 +495,10 @@ static void addAccusative(WordState word, char v, Scanner s){
 		word.text += "n";
 	}
 	
-	if(TurkishHelper.EndingWithVowel(word)) {
+	if(word.specialType.equals("o_su_bu")) {
+		word.text += "n";
+	}
+	else if(TurkishHelper.EndingWithVowel(word)) {
 		word.text += "y";
 	}
 	if(TurkishHelper.isFront(v) && TurkishHelper.isRounded(v)) {
@@ -505,7 +518,10 @@ static void addAccusative(WordState word, char v, Scanner s){
 static void addInstrumental(WordState word, char v, Scanner s){
 	word.hasCase = true;
 	
-	if(TurkishHelper.EndingWithVowel(word)) {
+	if(word.specialType.equals("o_su_bu")) {
+		word.text += "n";
+	}
+	else if(TurkishHelper.EndingWithVowel(word)) {
 		word.text += "y";
 	}
 	if(TurkishHelper.isFront(v)) {
@@ -520,11 +536,19 @@ static void addDative(WordState word, char v, Scanner s){
 	word.hasHardCase = true;
 	softenFinalConsonant(word);
 	
+	if(word.specialType.equals("ben_sen")) {
+		word.text = word.originalWord.equals("ben") ? "bana" : "sana";
+		return;
+	}
+	
 	if((word.thirdPossessive)) {
 		word.text += "n";
 	}
 	
-	if(TurkishHelper.EndingWithVowel(word)) {
+	if(word.specialType.equals("o_su_bu")) {
+		word.text += "n";
+	}
+	else if(TurkishHelper.EndingWithVowel(word)) {
 		word.text += "y";
 	}
 	
@@ -534,13 +558,16 @@ static void addDative(WordState word, char v, Scanner s){
 	else {
 		word.text += "a";
 	}
-	
 }
 
 static void addLocative(WordState word, char v, Scanner s){
 	word.hasCase = true;
 	
 	if((word.thirdPossessive)) {
+		word.text += "n";
+	}
+	
+	if(word.specialType.equals("o_su_bu")) {
 		word.text += "n";
 	}
 	
@@ -563,6 +590,10 @@ static void addAblative(WordState word, char v, Scanner s){
 	word.hasCase = true;
 	
 	if((word.thirdPossessive)) {
+		word.text += "n";
+	}
+	
+	if(word.specialType.equals("o_su_bu")) {
 		word.text += "n";
 	}
 	
@@ -601,6 +632,12 @@ static void softenFinalConsonant(WordState word) {
 
     char softened = (last == 'k') ? 'ğ' : 'b';
     word.text = word.text.substring(0, len - 1) + softened;
+}
+
+static void applyLinkingY(WordState word) {
+    if (word.specialType.equals("su_ne")) {
+        word.text += "y";
+    }
 }
 
 }

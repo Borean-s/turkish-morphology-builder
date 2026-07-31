@@ -3,7 +3,9 @@ package com.boreans.morphol.grammar;
 public class WordState {
 	
 	String text;
-
+	String specialType = "none";
+	String originalWord;
+	
     boolean thirdPossessive = false; // sonrasında genitive ve başka possesive gelemez, plural gelemez
     boolean genitive = false; // only past and copula
     boolean plural = false; // sonrasında plural gelemez ve third person plural possessive gelemez
@@ -18,6 +20,14 @@ public class WordState {
     
     public WordState(String text) {
         this.text = text;
+        this.originalWord = text;
+        if (text.equals("o") || text.equals("şu") || text.equals("bu")) {
+            specialType = "o_su_bu";
+        } else if (text.equals("su") || text.equals("ne")) {
+            specialType = "su_ne";
+        } else if (text.equals("ben") || text.equals("sen")) {
+            specialType = "ben_sen";
+        }
     }
     
     public String getText() {
@@ -34,6 +44,7 @@ public class WordState {
     public boolean isHasCopula() { return hasCopula; }
     public boolean isHasPast() { return hasPast; }
     public boolean isHasPossessive() { return hasPossessive; }
+    public String getSpecialType() { return specialType; }
     
     public void setThirdPossessive(boolean v) { this.thirdPossessive = v; }
     public void setGenitive(boolean v) { this.genitive = v; }
@@ -42,7 +53,8 @@ public class WordState {
     public void setHasHardCase(boolean v) { this.hasHardCase = v; }
     public void setHasCopula(boolean v) { this.hasCopula = v; }
     public void setHasPast(boolean v) { this.hasPast = v; }
-    public void setText(String text) { this.text = text; }
+    public void setText(String text) { this.text = text; this.originalWord = text; }
+
     public void setHasPossessive(boolean v) { this.hasPossessive = v; }
     
     public WordState(WordState other) {
@@ -55,6 +67,8 @@ public class WordState {
         this.hasCopula = other.hasCopula;
         this.hasPast = other.hasPast;
         this.hasPossessive = other.hasPossessive;
+        this.specialType = other.specialType;
+        this.originalWord = other.originalWord;
     }
     
 }
