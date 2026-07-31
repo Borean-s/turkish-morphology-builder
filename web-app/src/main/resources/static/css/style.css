@@ -6,6 +6,15 @@
     --white: #FFFFFF;
 }
 
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    overflow: hidden;
+}
+
 * {
     box-sizing: border-box;
 }
@@ -26,6 +35,8 @@ body {
     background: var(--white);
     border-right: 1px solid var(--stone-light);
     padding: 1.5rem 1rem;
+	height: 100vh;
+	overflow-y: auto;
 }
 
 .sidebar h3 {
@@ -79,6 +90,8 @@ body {
     justify-content: center;
     padding: 2rem;
     text-align: center;
+    height: 100vh;
+    overflow-y: auto;
 }
 
 .word-display {
