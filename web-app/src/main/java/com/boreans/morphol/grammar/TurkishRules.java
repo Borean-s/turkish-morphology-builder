@@ -25,6 +25,7 @@ public class TurkishRules {
     }
 
     public static boolean canAddPossessive(WordState word){
+        if(word.hasPossessive) return false;
         if(word.thirdPossessive) return false;
         if(word.genitive) return false;
         if(word.hasCase) return false;

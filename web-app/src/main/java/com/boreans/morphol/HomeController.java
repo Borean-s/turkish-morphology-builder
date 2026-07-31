@@ -37,6 +37,7 @@ public class HomeController {
         record.setHasHardCase(state.isHasHardCase());
         record.setHasCopula(state.isHasCopula());
         record.setHasPast(state.isHasPast());
+        record.setHasPossessive(state.isHasPossessive());
 
         repository.save(record);
     }
@@ -67,6 +68,45 @@ public class HomeController {
             response.canCopula = TurkishRules.canAddCopula(state);
             return response;
         }
+        
+        private WordState replay(String originalWord, String suffixHistory) {
+            WordState state = new WordState(originalWord);
+            if (suffixHistory == null || suffixHistory.isBlank()) {
+                return state;
+            }
+            String[] steps = suffixHistory.split(",");
+            for (String step : steps) {
+                String[] parts = step.split(":");
+                String name = parts[0];
+                char lastVowel = TurkishHelper.findLastVowel(state);
+
+                if (name.equals("possessive")) {
+                    int choice = Integer.parseInt(parts[1]);
+                    SuffixManager.addPossessive(state, lastVowel, choice);
+                } else if (name.equals("copula")) {
+                    int choice = Integer.parseInt(parts[1]);
+                    SuffixManager.addCopula(state, lastVowel, choice);
+                } else {
+                    int code = suffixCodes.get(name);
+                    SuffixManager.conjugateIt(state, code, lastVowel, null);
+                }
+            }
+            return state;
+        }
+        
+        private void applyStep(HttpSession session, String step) {
+            Long sessionId = (Long) session.getAttribute("sessionId");
+            DeclensionSession record = repository.findById(sessionId).orElseThrow();
+
+            String history = record.getSuffixHistory();
+            String newHistory = (history == null || history.isBlank()) ? step : history + "," + step;
+            record.setSuffixHistory(newHistory);
+            repository.save(record);
+
+            WordState state = replay(record.getOriginalWord(), newHistory);
+            session.setAttribute("wordState", state);
+            syncSession(session, state);
+        }
     
     
         @GetMapping("/api/word")
@@ -79,30 +119,28 @@ public class HomeController {
         @PostMapping("/api/suffix/{name}")
         @ResponseBody
         public WordStateResponse applySuffixJson(@PathVariable String name, HttpSession session) {
+            applyStep(session, name);
             WordState state = (WordState) session.getAttribute("wordState");
-            pushUndo(session, state);
-            int code = suffixCodes.get(name);
-            SuffixManager.conjugateIt(state, code, TurkishHelper.findLastVowel(state), null);
-            syncSession(session, state);
             return buildResponse(state);
         }
     
-    private void pushUndo(HttpSession session, WordState state) {
-        java.util.Deque<WordState> stack = (java.util.Deque<WordState>) session.getAttribute("undoStack");
-        if (stack == null) {
-            stack = new java.util.ArrayDeque<>();
-        }
-        stack.push(new WordState(state));
-        session.setAttribute("undoStack", stack);
-    }
+    
     
     @PostMapping("/undo")
     public String undo(HttpSession session) {
-        java.util.Deque<WordState> stack = (java.util.Deque<WordState>) session.getAttribute("undoStack");
-        if (stack != null && !stack.isEmpty()) {
-            WordState previous = stack.pop();
-            session.setAttribute("wordState", previous);
-            syncSession(session, previous);
+        Long sessionId = (Long) session.getAttribute("sessionId");
+        DeclensionSession record = repository.findById(sessionId).orElseThrow();
+
+        String history = record.getSuffixHistory();
+        if (history != null && !history.isBlank()) {
+            String[] steps = history.split(",");
+            String newHistory = String.join(",", java.util.Arrays.copyOf(steps, steps.length - 1));
+            record.setSuffixHistory(newHistory);
+            repository.save(record);
+
+            WordState state = replay(record.getOriginalWord(), newHistory);
+            session.setAttribute("wordState", state);
+            syncSession(session, state);
         }
         return "redirect:/word";
     }
@@ -117,7 +155,7 @@ public class HomeController {
     public String start(@RequestParam String word, HttpSession session) {
         WordState state = new WordState(word);
         session.setAttribute("wordState", state);
-        session.setAttribute("undoStack", new java.util.ArrayDeque<WordState>());
+       
 
         DeclensionSession record = new DeclensionSession();
         record.setOriginalWord(word);
@@ -154,14 +192,7 @@ public class HomeController {
     public String reopenSession(@PathVariable Long id, HttpSession session) {
         DeclensionSession record = repository.findById(id).orElseThrow();
 
-        WordState state = new WordState(record.getCurrentWord());
-        state.setThirdPossessive(record.isThirdPossessive());
-        state.setGenitive(record.isGenitive());
-        state.setPlural(record.isPlural());
-        state.setHasCase(record.isHasCase());
-        state.setHasHardCase(record.isHasHardCase());
-        state.setHasCopula(record.isHasCopula());
-        state.setHasPast(record.isHasPast());
+        WordState state = replay(record.getOriginalWord(), record.getSuffixHistory());
 
         session.setAttribute("wordState", state);
         session.setAttribute("sessionId", record.getId());
@@ -170,88 +201,24 @@ public class HomeController {
     }
 
     @PostMapping("/session/{id}/delete")
-    public String deleteSession(@PathVariable Long id) {
+    public String deleteSession(@PathVariable Long id, HttpSession session) {
         repository.deleteById(id);
+
+        Long currentSessionId = (Long) session.getAttribute("sessionId");
+        if (currentSessionId == null || currentSessionId.equals(id)) {
+            session.removeAttribute("wordState");
+            session.removeAttribute("sessionId");
+            return "redirect:/";
+        }
         return "redirect:/word";
     }
     
-    @PostMapping("/suffix/plural")
-    public String addPlural(HttpSession session) {
-        WordState state = (WordState) session.getAttribute("wordState");
-        pushUndo(session, state);
-        char lastVowel = TurkishHelper.findLastVowel(state);
-        SuffixManager.conjugateIt(state, 8, lastVowel, null);
-        syncSession(session, state);
-        return "redirect:/word";
-    }
-
-    @PostMapping("/suffix/accusative")
-    public String addAccusative(HttpSession session) {
-        WordState state = (WordState) session.getAttribute("wordState");
-        pushUndo(session, state);
-        SuffixManager.conjugateIt(state, 1, TurkishHelper.findLastVowel(state), null);
-        syncSession(session, state);
-        return "redirect:/word";
-    }
-
-    @PostMapping("/suffix/dative")
-    public String addDative(HttpSession session) {
-        WordState state = (WordState) session.getAttribute("wordState");
-        pushUndo(session, state);
-        SuffixManager.conjugateIt(state, 2, TurkishHelper.findLastVowel(state), null);
-        syncSession(session, state);
-        return "redirect:/word";
-    }
-
-    @PostMapping("/suffix/locative")
-    public String addLocative(HttpSession session) {
-        WordState state = (WordState) session.getAttribute("wordState");
-        pushUndo(session, state);
-        SuffixManager.conjugateIt(state, 3, TurkishHelper.findLastVowel(state), null);
-        syncSession(session, state);
-        return "redirect:/word";
-    }
-
-    @PostMapping("/suffix/ablative")
-    public String addAblative(HttpSession session) {
-        WordState state = (WordState) session.getAttribute("wordState");
-        pushUndo(session, state);
-        SuffixManager.conjugateIt(state, 4, TurkishHelper.findLastVowel(state), null);
-        syncSession(session, state);
-        return "redirect:/word";
-    }
-
-    @PostMapping("/suffix/instrumental")
-    public String addInstrumental(HttpSession session) {
-        WordState state = (WordState) session.getAttribute("wordState");
-        pushUndo(session, state);
-        SuffixManager.conjugateIt(state, 5, TurkishHelper.findLastVowel(state), null);
-        syncSession(session, state);
-        return "redirect:/word";
-    }
-
-    @PostMapping("/suffix/genitive")
-    public String addGenitive(HttpSession session) {
-        WordState state = (WordState) session.getAttribute("wordState");
-        pushUndo(session, state);
-        SuffixManager.conjugateIt(state, 6, TurkishHelper.findLastVowel(state), null);
-        syncSession(session, state);
-        return "redirect:/word";
-    }
-
-    @PostMapping("/suffix/past")
-    public String addPast(HttpSession session) {
-        WordState state = (WordState) session.getAttribute("wordState");
-        pushUndo(session, state);
-        SuffixManager.conjugateIt(state, 9, TurkishHelper.findLastVowel(state), null);
-        syncSession(session, state);
-        return "redirect:/word";
-    }
 
     @GetMapping("/suffix/possessive")
     public String choosePossessive(HttpSession session, Model model) {
         WordState state = (WordState) session.getAttribute("wordState");
         model.addAttribute("word", state.getText());
+        model.addAttribute("history", repository.findAll());
         return "possessive";
     }
 
@@ -259,9 +226,7 @@ public class HomeController {
     public String addPossessive(@PathVariable int choice, HttpSession session) {
         WordState state = (WordState) session.getAttribute("wordState");
         if (TurkishRules.canAddPossessive(state)) {
-            pushUndo(session, state);
-            SuffixManager.addPossessive(state, TurkishHelper.findLastVowel(state), choice);
-            syncSession(session, state);
+            applyStep(session, "possessive:" + choice);
         }
         return "redirect:/word";
     }
@@ -270,6 +235,7 @@ public class HomeController {
     public String chooseCopula(HttpSession session, Model model) {
         WordState state = (WordState) session.getAttribute("wordState");
         model.addAttribute("word", state.getText());
+        model.addAttribute("history", repository.findAll());
         return "copula";
     }
 
@@ -277,9 +243,7 @@ public class HomeController {
     public String addCopula(@PathVariable int choice, HttpSession session) {
         WordState state = (WordState) session.getAttribute("wordState");
         if (TurkishRules.canAddCopula(state)) {
-            pushUndo(session, state);
-            SuffixManager.addCopula(state, TurkishHelper.findLastVowel(state), choice);
-            syncSession(session, state);
+            applyStep(session, "copula:" + choice);
         }
         return "redirect:/word";
     }

@@ -24,6 +24,8 @@ public class WordState {
         return text;
     }
     
+    boolean hasPossessive;
+    
     public boolean isThirdPossessive() { return thirdPossessive; }
     public boolean isGenitive() { return genitive; }
     public boolean isPlural() { return plural; }
@@ -31,6 +33,7 @@ public class WordState {
     public boolean isHasHardCase() { return hasHardCase; }
     public boolean isHasCopula() { return hasCopula; }
     public boolean isHasPast() { return hasPast; }
+    public boolean isHasPossessive() { return hasPossessive; }
     
     public void setThirdPossessive(boolean v) { this.thirdPossessive = v; }
     public void setGenitive(boolean v) { this.genitive = v; }
@@ -40,6 +43,7 @@ public class WordState {
     public void setHasCopula(boolean v) { this.hasCopula = v; }
     public void setHasPast(boolean v) { this.hasPast = v; }
     public void setText(String text) { this.text = text; }
+    public void setHasPossessive(boolean v) { this.hasPossessive = v; }
     
     public WordState(WordState other) {
         this.text = other.text;
@@ -50,6 +54,7 @@ public class WordState {
         this.hasHardCase = other.hasHardCase;
         this.hasCopula = other.hasCopula;
         this.hasPast = other.hasPast;
+        this.hasPossessive = other.hasPossessive;
     }
     
 }

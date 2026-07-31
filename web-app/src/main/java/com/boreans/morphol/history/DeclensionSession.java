@@ -23,6 +23,8 @@ public class DeclensionSession {
     private boolean hasHardCase;
     private boolean hasCopula;
     private boolean hasPast;
+    private boolean hasPossessive;
+    private String suffixHistory = "";
 
     private LocalDateTime createdAt;
 
@@ -50,4 +52,8 @@ public class DeclensionSession {
     public void setHasPast(boolean hasPast) { this.hasPast = hasPast; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public boolean isHasPossessive() { return hasPossessive; }
+    public void setHasPossessive(boolean hasPossessive) { this.hasPossessive = hasPossessive; }
+    public String getSuffixHistory() { return suffixHistory; }
+    public void setSuffixHistory(String suffixHistory) { this.suffixHistory = suffixHistory; }
 }

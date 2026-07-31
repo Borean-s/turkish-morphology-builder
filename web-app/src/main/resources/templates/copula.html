@@ -5,14 +5,18 @@
     <title>Choose Copula Person</title>
 </head>
 <body>
-    <h1 th:text="${word}">placeholder</h1>
-    <p>Choose copula person:</p>
+    <div th:replace="~{sidebar :: sidebar}"></div>
 
-    <form action="/suffix/copula/1" method="post"><button type="submit">1st sg</button></form>
-    <form action="/suffix/copula/2" method="post"><button type="submit">1st pl</button></form>
-    <form action="/suffix/copula/3" method="post"><button type="submit">2nd sg</button></form>
-    <form action="/suffix/copula/4" method="post"><button type="submit">2nd pl</button></form>
-    <form action="/suffix/copula/5" method="post"><button type="submit">3rd sg</button></form>
-    <form action="/suffix/copula/6" method="post"><button type="submit">3rd pl</button></form>
+    <div style="margin-left:220px;">
+        <h1 th:text="${word}">placeholder</h1>
+        <p>Choose copula person:</p>
+
+        <form action="/suffix/copula/1" method="post"><button type="submit">1st sg</button></form>
+        <form action="/suffix/copula/2" method="post"><button type="submit">1st pl</button></form>
+        <form action="/suffix/copula/3" method="post"><button type="submit">2nd sg</button></form>
+        <form action="/suffix/copula/4" method="post"><button type="submit">2nd pl</button></form>
+        <form action="/suffix/copula/5" method="post"><button type="submit">3rd sg</button></form>
+        <form action="/suffix/copula/6" method="post"><button type="submit">3rd pl</button></form>
+    </div>
 </body>
 </html>

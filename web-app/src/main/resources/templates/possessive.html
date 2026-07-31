@@ -5,17 +5,22 @@
     <title>Choose Possessive Person</title>
 </head>
 <body>
-    <h1 th:text="${word}">placeholder</h1>
-    <p>Choose possessive person:</p>
+    <div th:replace="~{sidebar :: sidebar}"></div>
 
-    <form action="/suffix/possessive/1" method="post"><button type="submit">1st sg</button></form>
-    <form action="/suffix/possessive/2" method="post"><button type="submit">1st pl</button></form>
-    <form action="/suffix/possessive/3" method="post"><button type="submit">2nd sg</button></form>
-    <form action="/suffix/possessive/4" method="post"><button type="submit">2nd pl</button></form>
-    <form action="/suffix/possessive/5" method="post"><button type="submit">3rd sg</button></form>
-    <form action="/suffix/possessive/6" method="post"><button type="submit">3rd pl</button></form>
-	<form action="/word" method="get">
-	        <button type="submit">Return</button>
-	    </form>
+    <div style="margin-left:220px;">
+        <h1 th:text="${word}">placeholder</h1>
+        <p>Choose possessive person:</p>
+
+        <form action="/word" method="get">
+            <button type="submit">Return</button>
+        </form>
+
+        <form action="/suffix/possessive/1" method="post"><button type="submit">1st sg</button></form>
+        <form action="/suffix/possessive/2" method="post"><button type="submit">1st pl</button></form>
+        <form action="/suffix/possessive/3" method="post"><button type="submit">2nd sg</button></form>
+        <form action="/suffix/possessive/4" method="post"><button type="submit">2nd pl</button></form>
+        <form action="/suffix/possessive/5" method="post"><button type="submit">3rd sg</button></form>
+        <form action="/suffix/possessive/6" method="post"><button type="submit">3rd pl</button></form>
+    </div>
 </body>
 </html>

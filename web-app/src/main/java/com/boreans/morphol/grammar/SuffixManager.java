@@ -133,13 +133,13 @@ static void addGenitive(WordState word, char v, Scanner s){
 }
 
 public static void addPossessive(WordState word, char v, int genChoice){
-	
+	word.hasPossessive = true;
 	switch(genChoice) {
 		case 1 : 
 			if(TurkishHelper.EndingWithVowel(word)) {
 				word.text += "m";
 			}
-			if(TurkishHelper.isFront(v) && TurkishHelper.isRounded(v)) {
+			else if(TurkishHelper.isFront(v) && TurkishHelper.isRounded(v)) {
 				word.text += "üm";
 			}
 			else if(!(TurkishHelper.isFront(v)) && TurkishHelper.isRounded(v)) {

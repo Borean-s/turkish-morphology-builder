@@ -6,56 +6,79 @@
 </head>
 <body>
 
-	<div th:replace="~{sidebar :: sidebar}"></div>
+    <div th:replace="~{sidebar :: sidebar}"></div>
 
     <div style="margin-left:220px;">
-        <h1 th:text="${word}">placeholder</h1>
-		<form action="/" method="get">
-		            <button type="submit">New Word</button>
-		        </form>
-				
-				<form action="/undo" method="post">
-				            <button type="submit">Undo</button>
-				        </form>
-				
-        <form th:if="${canPlural}" action="/suffix/plural" method="post">
-            <button type="submit">Plural</button>
+        <h1 id="word-display" th:text="${word}">placeholder</h1>
+
+        <form action="/" method="get">
+            <button type="submit">New Word</button>
         </form>
-        <form th:if="${canAccusative}" action="/suffix/accusative" method="post">
-            <button type="submit">Accusative</button>
+
+        <form action="/undo" method="post">
+            <button type="submit">Undo</button>
         </form>
-        <form th:if="${canDative}" action="/suffix/dative" method="post">
-            <button type="submit">Dative</button>
-        </form>
-        <form th:if="${canLocative}" action="/suffix/locative" method="post">
-            <button type="submit">Locative</button>
-        </form>
-        <form th:if="${canAblative}" action="/suffix/ablative" method="post">
-            <button type="submit">Ablative</button>
-        </form>
-        <form th:if="${canInstrumental}" action="/suffix/instrumental" method="post">
-            <button type="submit">Instrumental</button>
-        </form>
-        <form th:if="${canGenitive}" action="/suffix/genitive" method="post">
-            <button type="submit">Genitive</button>
-        </form>
-        <form th:if="${canPast}" action="/suffix/past" method="post">
-            <button type="submit">Past</button>
-        </form>
-        <form th:if="${canPossessive}" action="/suffix/possessive" method="get">
-            <button type="submit">Possessive</button>
-        </form>
-        <form th:if="${canCopula}" action="/suffix/copula" method="get">
-            <button type="submit">Copula</button>
-        </form>
+
+        <button id="btn-plural" onclick="applySuffix('plural')">Plural</button>
+        <button id="btn-accusative" onclick="applySuffix('accusative')">Accusative</button>
+        <button id="btn-dative" onclick="applySuffix('dative')">Dative</button>
+        <button id="btn-locative" onclick="applySuffix('locative')">Locative</button>
+        <button id="btn-ablative" onclick="applySuffix('ablative')">Ablative</button>
+        <button id="btn-instrumental" onclick="applySuffix('instrumental')">Instrumental</button>
+        <button id="btn-genitive" onclick="applySuffix('genitive')">Genitive</button>
+        <button id="btn-past" onclick="applySuffix('past')">Past</button>
+
+		<a id="link-possessive" href="/suffix/possessive"><button type="button">Possessive</button></a>
+		        <a id="link-copula" href="/suffix/copula"><button type="button">Copula</button></a>
     </div>
-	
-	<script>
-	        fetch('/api/word')
-	            .then(response => response.json())
-	            .then(data => {
-	                console.log(data);
-	            });
+
+	<script th:inline="javascript">
+	        const canFlags = {
+	            plural: /*[[${canPlural}]]*/ true,
+	            accusative: /*[[${canAccusative}]]*/ true,
+	            dative: /*[[${canDative}]]*/ true,
+	            locative: /*[[${canLocative}]]*/ true,
+	            ablative: /*[[${canAblative}]]*/ true,
+	            instrumental: /*[[${canInstrumental}]]*/ true,
+	            genitive: /*[[${canGenitive}]]*/ true,
+	            past: /*[[${canPast}]]*/ true,
+	            possessive: /*[[${canPossessive}]]*/ true,
+	            copula: /*[[${canCopula}]]*/ true
+	        };
+
+	        function refreshButtons(data) {
+	            document.getElementById('word-display').textContent = data.word;
+	            document.getElementById('btn-plural').style.display = data.canPlural ? 'inline-block' : 'none';
+	            document.getElementById('btn-accusative').style.display = data.canAccusative ? 'inline-block' : 'none';
+	            document.getElementById('btn-dative').style.display = data.canDative ? 'inline-block' : 'none';
+	            document.getElementById('btn-locative').style.display = data.canLocative ? 'inline-block' : 'none';
+	            document.getElementById('btn-ablative').style.display = data.canAblative ? 'inline-block' : 'none';
+	            document.getElementById('btn-instrumental').style.display = data.canInstrumental ? 'inline-block' : 'none';
+	            document.getElementById('btn-genitive').style.display = data.canGenitive ? 'inline-block' : 'none';
+	            document.getElementById('btn-past').style.display = data.canPast ? 'inline-block' : 'none';
+	            document.getElementById('link-possessive').style.display = data.canPossessive ? 'inline-block' : 'none';
+	            document.getElementById('link-copula').style.display = data.canCopula ? 'inline-block' : 'none';
+	        }
+
+	        function applySuffix(name) {
+	            fetch('/api/suffix/' + name, { method: 'POST' })
+	                .then(response => response.json())
+	                .then(data => refreshButtons(data));
+	        }
+
+	        refreshButtons({
+	            word: document.getElementById('word-display').textContent,
+	            canPlural: canFlags.plural,
+	            canAccusative: canFlags.accusative,
+	            canDative: canFlags.dative,
+	            canLocative: canFlags.locative,
+	            canAblative: canFlags.ablative,
+	            canInstrumental: canFlags.instrumental,
+	            canGenitive: canFlags.genitive,
+	            canPast: canFlags.past,
+	            canPossessive: canFlags.possessive,
+	            canCopula: canFlags.copula
+	        });
 	    </script>
 
 </body>
