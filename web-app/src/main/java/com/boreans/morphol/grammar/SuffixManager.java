@@ -136,6 +136,7 @@ public static void addPossessive(WordState word, char v, int genChoice){
 	word.hasPossessive = true;
 	switch(genChoice) {
 		case 1 : 
+			softenFinalConsonant(word);
 			if(TurkishHelper.EndingWithVowel(word)) {
 				word.text += "m";
 			}
@@ -154,6 +155,7 @@ public static void addPossessive(WordState word, char v, int genChoice){
 			break;
 			
 		case 2 : 
+			softenFinalConsonant(word);
 			if(!(TurkishHelper.EndingWithVowel(word))) {
 				if(TurkishHelper.isFront(v) && TurkishHelper.isRounded(v)) {
 					word.text += "ü";
@@ -183,6 +185,7 @@ public static void addPossessive(WordState word, char v, int genChoice){
 			break;
 			
 		case 3 : 
+			softenFinalConsonant(word);
 			if(TurkishHelper.EndingWithVowel(word)) {
 				word.text += "n";
 			}
@@ -201,6 +204,7 @@ public static void addPossessive(WordState word, char v, int genChoice){
 			break;
 			
 		case 4 : 
+			softenFinalConsonant(word);
 			if(!(TurkishHelper.EndingWithVowel(word))) {
 				if(TurkishHelper.isFront(v) && TurkishHelper.isRounded(v)) {
 					word.text += "ü";
@@ -230,7 +234,7 @@ public static void addPossessive(WordState word, char v, int genChoice){
 			break;
 			
 		case 5 : 
-			
+			softenFinalConsonant(word);
 			word.thirdPossessive = true;
 			
 			if(TurkishHelper.EndingWithVowel(word)) {
@@ -297,11 +301,12 @@ public static void addCopula(WordState word, char v, int copChoice) {
 	word.hasCopula = true;
 	
 	
+	
 	if(!(word.hasPast)) {
 	
 	switch(copChoice) {
 		case 1 :
-			
+			softenFinalConsonant(word);
 			if(TurkishHelper.EndingWithVowel(word)) {
 				word.text += "y";
 			}
@@ -320,7 +325,7 @@ public static void addCopula(WordState word, char v, int copChoice) {
 			}
 			break;
 		case 2 :
-			
+			softenFinalConsonant(word);
 			if(TurkishHelper.EndingWithVowel(word)) {
 				word.text += "y";
 			}
@@ -474,6 +479,7 @@ public static void addCopula(WordState word, char v, int copChoice) {
 
 static void addAccusative(WordState word, char v, Scanner s){
 	word.hasHardCase = true;
+	softenFinalConsonant(word);
 	
 	if((word.thirdPossessive)) {
 		word.text += "n";
@@ -512,6 +518,7 @@ static void addInstrumental(WordState word, char v, Scanner s){
 
 static void addDative(WordState word, char v, Scanner s){
 	word.hasHardCase = true;
+	softenFinalConsonant(word);
 	
 	if((word.thirdPossessive)) {
 		word.text += "n";
@@ -572,6 +579,28 @@ static void addAblative(WordState word, char v, Scanner s){
 	else {
 		word.text += "an";
 	}
+}
+
+static void softenFinalConsonant(WordState word) {
+    int len = word.text.length();
+    if (len < 2) return;
+
+    char last = word.text.charAt(len - 1);
+    if (last != 'k' && last != 'p') return;
+
+    char secondLast = word.text.charAt(len - 2);
+    if (!TurkishHelper.isVowel(secondLast)) return; // consonant cluster (e.g. "nk" in tank) — excluded
+
+    int consonantCount = 0;
+    for (int i = 0; i < len; i++) {
+        if (!TurkishHelper.isVowel(word.text.charAt(i))) {
+            consonantCount++;
+        }
+    }
+    if (consonantCount <= 1) return; // monosyllabic (e.g. "ek") — excluded
+
+    char softened = (last == 'k') ? 'ğ' : 'b';
+    word.text = word.text.substring(0, len - 1) + softened;
 }
 
 }

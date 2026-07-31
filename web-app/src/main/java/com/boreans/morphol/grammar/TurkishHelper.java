@@ -74,4 +74,13 @@ public class TurkishHelper {
             return false;
         }
     }
+    
+    public static boolean isVowel(char c) {
+        switch (c) {
+        case 'a': case 'e': case 'ı': case 'i': case 'o': case 'ö': case 'u': case 'ü':
+            return true;
+        default:
+            return false;
+        }
+    }
 }
