@@ -1,0 +1,202 @@
+:root {
+    --stone-dark: #5B4A3A;
+    --stone-mid: #8C7B6B;
+    --stone-light: #C9B896;
+    --cream: #F6F1E8;
+    --white: #FFFFFF;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--cream);
+    color: var(--stone-dark);
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 220px;
+    flex-shrink: 0;
+    background: var(--white);
+    border-right: 1px solid var(--stone-light);
+    padding: 1.5rem 1rem;
+}
+
+.sidebar h3 {
+    margin: 0 0 1rem;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--stone-mid);
+}
+
+.logo {
+    font-size: 1.3rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--stone-dark);
+    margin-bottom: 1.5rem;
+}
+
+.sidebar-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.4rem 0;
+    border-bottom: 1px solid var(--cream);
+}
+
+.sidebar-item a {
+    color: var(--stone-dark);
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.sidebar-item a:hover {
+    color: var(--stone-mid);
+}
+
+.sidebar-item button {
+    background: none;
+    border: none;
+    color: var(--stone-light);
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+/* Main content area */
+.main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    text-align: center;
+}
+
+.word-display {
+    font-size: 4rem;
+    font-weight: 500;
+    margin: 0 0 2rem;
+    color: var(--stone-dark);
+}
+
+.button-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.6rem;
+    max-width: 500px;
+}
+
+button, .btn {
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    border: 1px solid var(--stone-mid);
+    background: var(--stone-dark);
+    color: var(--cream);
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+button:hover, .btn:hover {
+    background: var(--stone-mid);
+}
+
+.btn-disabled {
+    background: var(--white);
+    color: var(--stone-light);
+    border-color: var(--stone-light);
+    cursor: not-allowed;
+}
+
+.btn-disabled:hover {
+    background: var(--white);
+}
+
+.utility-row {
+    display: flex;
+    gap: 0.6rem;
+    margin-top: 2rem;
+}
+
+/* Clear separation between suffix buttons and utility actions */
+.utility-row {
+    border-top: 1px solid var(--stone-light);
+    padding-top: 1.5rem;
+}
+
+.btn-undo {
+    background: #A63B1F;
+    border-color: #A63B1F;
+}
+
+.btn-undo:hover {
+    background: #8A311A;
+}
+
+/* Word-style text input on the home page */
+.word-input {
+    font-family: inherit;
+    font-size: 4rem;
+    font-weight: 500;
+    color: var(--stone-dark);
+    text-align: center;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid var(--stone-light);
+    box-shadow: 0 4px 6px -4px rgba(91, 74, 58, 0.3);
+    padding: 0.2rem 0.5rem;
+    outline: none;
+    width: 90%;
+    max-width: 900px;
+}
+
+.word-input::placeholder {
+    color: var(--stone-dark);
+    opacity: 0.3;
+    font-size: 1.8rem;
+}
+
+.word-input:focus {
+    border-bottom-color: var(--stone-dark);
+}
+
+.person-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.6rem;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.suffix-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.6rem;
+    max-width: 600px;
+    margin: 0 auto 2rem;
+}
+
+/* Buttons fill their grid cell evenly */
+.suffix-grid form,
+.person-grid form {
+    width: 100%;
+}
+
+.suffix-grid button,
+.person-grid button {
+    width: 100%;
+}
+
+/* Consistent sizing for utility buttons across all pages */
+.utility-row button {
+    min-width: 130px;
+}

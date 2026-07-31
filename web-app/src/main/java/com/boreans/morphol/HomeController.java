@@ -147,7 +147,7 @@ public class HomeController {
 
     @GetMapping("/")
     public String home(Model model) {
-        model.addAttribute("history", repository.findAll());
+        model.addAttribute("history", repository.findAllByOrderByIdDesc());
         return "home";
     }
 
@@ -183,7 +183,7 @@ public class HomeController {
         model.addAttribute("canPossessive", TurkishRules.canAddPossessive(state));
         model.addAttribute("canCopula", TurkishRules.canAddCopula(state));
 
-        model.addAttribute("history", repository.findAll());
+        model.addAttribute("history", repository.findAllByOrderByIdDesc());
 
         return "word";
     }
@@ -218,7 +218,7 @@ public class HomeController {
     public String choosePossessive(HttpSession session, Model model) {
         WordState state = (WordState) session.getAttribute("wordState");
         model.addAttribute("word", state.getText());
-        model.addAttribute("history", repository.findAll());
+        model.addAttribute("history", repository.findAllByOrderByIdDesc());
         return "possessive";
     }
 
@@ -235,7 +235,7 @@ public class HomeController {
     public String chooseCopula(HttpSession session, Model model) {
         WordState state = (WordState) session.getAttribute("wordState");
         model.addAttribute("word", state.getText());
-        model.addAttribute("history", repository.findAll());
+        model.addAttribute("history", repository.findAllByOrderByIdDesc());
         return "copula";
     }
 

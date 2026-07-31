@@ -3,83 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <title>Turkish Morphology Builder</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
 
     <div th:replace="~{sidebar :: sidebar}"></div>
 
-    <div style="margin-left:220px;">
-        <h1 id="word-display" th:text="${word}">placeholder</h1>
+    <div class="main">
+        <h1 id="word-display" class="word-display" th:text="${word}">placeholder</h1>
 
-        <form action="/" method="get">
-            <button type="submit">New Word</button>
-        </form>
+        <div class="suffix-grid">
+            <button id="btn-plural" onclick="applySuffix('plural')">Plural</button>
+            <button id="btn-accusative" onclick="applySuffix('accusative')">Accusative</button>
+            <button id="btn-dative" onclick="applySuffix('dative')">Dative</button>
+            <button id="btn-locative" onclick="applySuffix('locative')">Locative</button>
+            <button id="btn-ablative" onclick="applySuffix('ablative')">Ablative</button>
+            <button id="btn-instrumental" onclick="applySuffix('instrumental')">Instrumental</button>
+            <button id="btn-genitive" onclick="applySuffix('genitive')">Genitive</button>
+            <button id="btn-past" onclick="applySuffix('past')">Past</button>
+            <a id="link-possessive" href="/suffix/possessive"><button type="button">Possessive</button></a>
+            <a id="link-copula" href="/suffix/copula"><button type="button">Copula</button></a>
+        </div>
 
-        <form action="/undo" method="post">
-            <button type="submit">Undo</button>
-        </form>
-
-        <button id="btn-plural" onclick="applySuffix('plural')">Plural</button>
-        <button id="btn-accusative" onclick="applySuffix('accusative')">Accusative</button>
-        <button id="btn-dative" onclick="applySuffix('dative')">Dative</button>
-        <button id="btn-locative" onclick="applySuffix('locative')">Locative</button>
-        <button id="btn-ablative" onclick="applySuffix('ablative')">Ablative</button>
-        <button id="btn-instrumental" onclick="applySuffix('instrumental')">Instrumental</button>
-        <button id="btn-genitive" onclick="applySuffix('genitive')">Genitive</button>
-        <button id="btn-past" onclick="applySuffix('past')">Past</button>
-
-		<a id="link-possessive" href="/suffix/possessive"><button type="button">Possessive</button></a>
-		        <a id="link-copula" href="/suffix/copula"><button type="button">Copula</button></a>
+        <div class="utility-row">
+            <form action="/" method="get">
+                <button type="submit">New Word</button>
+            </form>
+			<form action="/undo" method="post">
+			                <button type="submit" class="btn-undo">Undo</button>
+			 </form>
+        </div>
     </div>
 
-	<script th:inline="javascript">
-	        const canFlags = {
-	            plural: /*[[${canPlural}]]*/ true,
-	            accusative: /*[[${canAccusative}]]*/ true,
-	            dative: /*[[${canDative}]]*/ true,
-	            locative: /*[[${canLocative}]]*/ true,
-	            ablative: /*[[${canAblative}]]*/ true,
-	            instrumental: /*[[${canInstrumental}]]*/ true,
-	            genitive: /*[[${canGenitive}]]*/ true,
-	            past: /*[[${canPast}]]*/ true,
-	            possessive: /*[[${canPossessive}]]*/ true,
-	            copula: /*[[${canCopula}]]*/ true
-	        };
+    <script th:inline="javascript">
+        const canFlags = {
+            plural: /*[[${canPlural}]]*/ true,
+            accusative: /*[[${canAccusative}]]*/ true,
+            dative: /*[[${canDative}]]*/ true,
+            locative: /*[[${canLocative}]]*/ true,
+            ablative: /*[[${canAblative}]]*/ true,
+            instrumental: /*[[${canInstrumental}]]*/ true,
+            genitive: /*[[${canGenitive}]]*/ true,
+            past: /*[[${canPast}]]*/ true,
+            possessive: /*[[${canPossessive}]]*/ true,
+            copula: /*[[${canCopula}]]*/ true
+        };
 
-	        function refreshButtons(data) {
-	            document.getElementById('word-display').textContent = data.word;
-	            document.getElementById('btn-plural').style.display = data.canPlural ? 'inline-block' : 'none';
-	            document.getElementById('btn-accusative').style.display = data.canAccusative ? 'inline-block' : 'none';
-	            document.getElementById('btn-dative').style.display = data.canDative ? 'inline-block' : 'none';
-	            document.getElementById('btn-locative').style.display = data.canLocative ? 'inline-block' : 'none';
-	            document.getElementById('btn-ablative').style.display = data.canAblative ? 'inline-block' : 'none';
-	            document.getElementById('btn-instrumental').style.display = data.canInstrumental ? 'inline-block' : 'none';
-	            document.getElementById('btn-genitive').style.display = data.canGenitive ? 'inline-block' : 'none';
-	            document.getElementById('btn-past').style.display = data.canPast ? 'inline-block' : 'none';
-	            document.getElementById('link-possessive').style.display = data.canPossessive ? 'inline-block' : 'none';
-	            document.getElementById('link-copula').style.display = data.canCopula ? 'inline-block' : 'none';
-	        }
+        function setButtonState(id, enabled) {
+            const el = document.getElementById(id);
+            el.disabled = !enabled;
+            el.classList.toggle('btn-disabled', !enabled);
+        }
 
-	        function applySuffix(name) {
-	            fetch('/api/suffix/' + name, { method: 'POST' })
-	                .then(response => response.json())
-	                .then(data => refreshButtons(data));
-	        }
+        function refreshButtons(data) {
+            document.getElementById('word-display').textContent = data.word;
+            setButtonState('btn-plural', data.canPlural);
+            setButtonState('btn-accusative', data.canAccusative);
+            setButtonState('btn-dative', data.canDative);
+            setButtonState('btn-locative', data.canLocative);
+            setButtonState('btn-ablative', data.canAblative);
+            setButtonState('btn-instrumental', data.canInstrumental);
+            setButtonState('btn-genitive', data.canGenitive);
+            setButtonState('btn-past', data.canPast);
 
-	        refreshButtons({
-	            word: document.getElementById('word-display').textContent,
-	            canPlural: canFlags.plural,
-	            canAccusative: canFlags.accusative,
-	            canDative: canFlags.dative,
-	            canLocative: canFlags.locative,
-	            canAblative: canFlags.ablative,
-	            canInstrumental: canFlags.instrumental,
-	            canGenitive: canFlags.genitive,
-	            canPast: canFlags.past,
-	            canPossessive: canFlags.possessive,
-	            canCopula: canFlags.copula
-	        });
-	    </script>
+            const possessiveLink = document.getElementById('link-possessive');
+            possessiveLink.style.pointerEvents = data.canPossessive ? 'auto' : 'none';
+            possessiveLink.querySelector('button').classList.toggle('btn-disabled', !data.canPossessive);
+            possessiveLink.querySelector('button').disabled = !data.canPossessive;
+
+            const copulaLink = document.getElementById('link-copula');
+            copulaLink.style.pointerEvents = data.canCopula ? 'auto' : 'none';
+            copulaLink.querySelector('button').classList.toggle('btn-disabled', !data.canCopula);
+            copulaLink.querySelector('button').disabled = !data.canCopula;
+        }
+
+        function applySuffix(name) {
+            fetch('/api/suffix/' + name, { method: 'POST' })
+                .then(response => response.json())
+                .then(data => refreshButtons(data));
+        }
+
+        refreshButtons({
+            word: document.getElementById('word-display').textContent,
+            canPlural: canFlags.plural,
+            canAccusative: canFlags.accusative,
+            canDative: canFlags.dative,
+            canLocative: canFlags.locative,
+            canAblative: canFlags.ablative,
+            canInstrumental: canFlags.instrumental,
+            canGenitive: canFlags.genitive,
+            canPast: canFlags.past,
+            canPossessive: canFlags.possessive,
+            canCopula: canFlags.copula
+        });
+    </script>
 
 </body>
 </html>

@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body>
-    <div th:fragment="sidebar" style="float:left; width:200px; border-right:1px solid #ccc; padding-right:10px;">
+    <div th:fragment="sidebar" class="sidebar">
+        <div class="logo">MorphoTR</div>
         <h3>History</h3>
-        <div th:each="item : ${history}" style="margin-bottom:8px;">
+        <div class="sidebar-item" th:each="item : ${history}">
             <a th:href="@{/session/{id}(id=${item.id})}" th:text="${item.currentWord}">word</a>
             <form th:action="@{/session/{id}/delete(id=${item.id})}" method="post" style="display:inline;">
-                <button type="submit">x</button>
+                <button type="submit">×</button>
             </form>
         </div>
     </div>
