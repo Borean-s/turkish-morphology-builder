@@ -5,7 +5,7 @@ public class TurkishRules {
 
     public static boolean canAddPlural(WordState word){
         if(word.plural) return false;
-        if(word.thirdPossessive) return false;
+        if(word.hasPossessive) return false;
         if(word.genitive) return false;
         if(word.hasCase) return false;
         if(word.hasHardCase) return false;

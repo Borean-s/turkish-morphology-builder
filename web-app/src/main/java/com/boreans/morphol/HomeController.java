@@ -281,6 +281,9 @@ public class HomeController {
     public String choosePossessive(HttpSession session, Model model) {
         WordState state = (WordState) session.getAttribute("wordState");
         model.addAttribute("word", state.getText());
+        Long sessionId = (Long) session.getAttribute("sessionId");
+        DeclensionSession record = repository.findById(sessionId).orElseThrow();
+        model.addAttribute("segments", buildSegments(record.getOriginalWord(), record.getSuffixHistory()));
         model.addAttribute("history", repository.findAllByOrderByIdDesc());
         return "possessive";
     }
@@ -298,6 +301,9 @@ public class HomeController {
     public String chooseCopula(HttpSession session, Model model) {
         WordState state = (WordState) session.getAttribute("wordState");
         model.addAttribute("word", state.getText());
+        Long sessionId = (Long) session.getAttribute("sessionId");
+        DeclensionSession record = repository.findById(sessionId).orElseThrow();
+        model.addAttribute("segments", buildSegments(record.getOriginalWord(), record.getSuffixHistory()));
         model.addAttribute("history", repository.findAllByOrderByIdDesc());
         return "copula";
     }

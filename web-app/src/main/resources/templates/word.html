@@ -34,6 +34,11 @@
             <a id="link-possessive" href="/suffix/possessive"><button type="button">Possessive</button></a>
             <a id="link-copula" href="/suffix/copula"><button type="button">Copula</button></a>
         </div>
+		
+		<label class="color-toggle">
+		            <input type="checkbox" id="color-toggle">
+		            Colored suffixes
+		        </label>
 
         <div class="utility-row">
             <form action="/" method="get">
@@ -43,6 +48,7 @@
 			                <button type="submit" class="btn-undo">Undo</button>
 			 </form>
         </div>
+		
     </div>
 
     <script th:inline="javascript">
@@ -58,6 +64,15 @@
             possessive: /*[[${canPossessive}]]*/ true,
             copula: /*[[${canCopula}]]*/ true
         };
+		
+		const colorCheckbox = document.getElementById('color-toggle');
+		        colorCheckbox.checked = sessionStorage.getItem('colorMode') === 'true';
+		        document.getElementById('word-display').classList.toggle('color-mode', colorCheckbox.checked);
+
+		        colorCheckbox.addEventListener('change', function() {
+		            document.getElementById('word-display').classList.toggle('color-mode', this.checked);
+		            sessionStorage.setItem('colorMode', this.checked);
+		        });
 
         function setButtonState(id, enabled) {
             const el = document.getElementById(id);

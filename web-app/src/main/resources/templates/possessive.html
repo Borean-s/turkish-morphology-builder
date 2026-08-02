@@ -10,8 +10,9 @@
     <div th:replace="~{sidebar :: sidebar}"></div>
 
     <div class="main">
-        <h1 class="word-display" th:text="${word}">placeholder</h1>
-        <p>Choose possessive person:</p>
+		<h1 class="word-display">
+		            <span th:each="seg : ${segments}" th:text="${seg.text}" th:class="'seg-' + ${seg.label}"></span>
+		        </h1>        <p>Choose possessive person:</p>
 
         <div class="person-grid">
             <form action="/suffix/possessive/1" method="post"><button type="submit">1st sg</button></form>
@@ -29,4 +30,9 @@
         </div>
     </div>
 </body>
+<script>
+        if (sessionStorage.getItem('colorMode') === 'true') {
+            document.querySelector('.word-display').classList.add('color-mode');
+        }
+    </script>
 </html>
