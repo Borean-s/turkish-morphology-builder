@@ -216,3 +216,14 @@ button:hover, .btn:hover {
 .utility-row button {
     min-width: 130px;
 }
+
+.breakdown {
+    font-size: 1rem;
+    color: var(--stone-mid);
+    margin-top: -1rem;
+    margin-bottom: 2rem;
+}
+
+.seg-stem {
+    color: var(--stone-dark);
+}

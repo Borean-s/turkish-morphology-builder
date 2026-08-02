@@ -231,6 +231,10 @@ public class HomeController {
         WordState state = (WordState) session.getAttribute("wordState");
         model.addAttribute("word", state.getText());
 
+        Long sessionId = (Long) session.getAttribute("sessionId");
+        DeclensionSession record = repository.findById(sessionId).orElseThrow();
+        model.addAttribute("segments", buildSegments(record.getOriginalWord(), record.getSuffixHistory()));
+
         model.addAttribute("canPlural", TurkishRules.canAddPlural(state));
         model.addAttribute("canAccusative", TurkishRules.canAddCase(state));
         model.addAttribute("canDative", TurkishRules.canAddCase(state));

@@ -11,7 +11,16 @@
     <div th:replace="~{sidebar :: sidebar}"></div>
 
     <div class="main">
-        <h1 id="word-display" class="word-display" th:text="${word}">placeholder</h1>
+		<h1 id="word-display" class="word-display">
+		            <span th:each="seg : ${segments}" th:text="${seg.text}" th:class="'seg-' + ${seg.label}"></span>
+		        </h1>
+		        <p id="breakdown" class="breakdown">
+		            <span th:each="seg, iter : ${segments}">
+		                <span th:if="${!iter.first}"> + </span>
+		                <span th:text="${seg.text}"></span>
+		                <span th:if="${seg.label != 'stem'}" th:text="'(' + ${seg.label} + ')'"></span>
+		            </span>
+		        </p>
 
         <div class="suffix-grid">
             <button id="btn-plural" onclick="applySuffix('plural')">Plural</button>
@@ -56,8 +65,8 @@
             el.classList.toggle('btn-disabled', !enabled);
         }
 
-        function refreshButtons(data) {
-            document.getElementById('word-display').textContent = data.word;
+		function refreshButtons(data) {
+		    renderWord(data.segments);
             setButtonState('btn-plural', data.canPlural);
             setButtonState('btn-accusative', data.canAccusative);
             setButtonState('btn-dative', data.canDative);
@@ -83,9 +92,33 @@
                 .then(response => response.json())
                 .then(data => refreshButtons(data));
         }
+		
+		function renderWord(segments) {
+		            const wordEl = document.getElementById('word-display');
+		            wordEl.innerHTML = '';
+		            segments.forEach(seg => {
+		                const span = document.createElement('span');
+		                span.textContent = seg.text;
+		                span.className = 'seg-' + seg.label;
+		                wordEl.appendChild(span);
+		            });
 
-        refreshButtons({
-            word: document.getElementById('word-display').textContent,
+		            const breakdownEl = document.getElementById('breakdown');
+		            breakdownEl.innerHTML = '';
+		            segments.forEach((seg, i) => {
+		                if (i > 0) {
+		                    breakdownEl.appendChild(document.createTextNode(' + '));
+		                }
+		                breakdownEl.appendChild(document.createTextNode(seg.text));
+		                if (seg.label !== 'stem') {
+		                    breakdownEl.appendChild(document.createTextNode(' (' + seg.label + ')'));
+		                }
+		            });
+		        }
+
+        
+			refreshButtons({
+			            segments: /*[[${segments}]]*/ [],
             canPlural: canFlags.plural,
             canAccusative: canFlags.accusative,
             canDative: canFlags.dative,
