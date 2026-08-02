@@ -13,4 +13,5 @@ public class WordStateResponse {
     public boolean canPast;
     public boolean canPossessive;
     public boolean canCopula;
+    public java.util.List<SegmentResponse> segments;
 }

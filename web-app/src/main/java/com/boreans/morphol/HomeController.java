@@ -53,21 +53,22 @@ public class HomeController {
             "past", 9
         );
 
-        private WordStateResponse buildResponse(WordState state) {
-            WordStateResponse response = new WordStateResponse();
-            response.word = state.getText();
-            response.canPlural = TurkishRules.canAddPlural(state);
-            response.canAccusative = TurkishRules.canAddCase(state);
-            response.canDative = TurkishRules.canAddCase(state);
-            response.canLocative = TurkishRules.canAddCase(state);
-            response.canAblative = TurkishRules.canAddCase(state);
-            response.canInstrumental = TurkishRules.canAddCase(state);
-            response.canGenitive = TurkishRules.canAddGenitive(state);
-            response.canPast = TurkishRules.canAddPast(state);
-            response.canPossessive = TurkishRules.canAddPossessive(state);
-            response.canCopula = TurkishRules.canAddCopula(state);
-            return response;
-        }
+    private WordStateResponse buildResponse(WordState state, String originalWord, String suffixHistory) {
+        WordStateResponse response = new WordStateResponse();
+        response.word = state.getText();
+        response.canPlural = TurkishRules.canAddPlural(state);
+        response.canAccusative = TurkishRules.canAddCase(state);
+        response.canDative = TurkishRules.canAddCase(state);
+        response.canLocative = TurkishRules.canAddCase(state);
+        response.canAblative = TurkishRules.canAddCase(state);
+        response.canInstrumental = TurkishRules.canAddCase(state);
+        response.canGenitive = TurkishRules.canAddGenitive(state);
+        response.canPast = TurkishRules.canAddPast(state);
+        response.canPossessive = TurkishRules.canAddPossessive(state);
+        response.canCopula = TurkishRules.canAddCopula(state);
+        response.segments = buildSegments(originalWord, suffixHistory);
+        return response;
+    }
         
         private WordState replay(String originalWord, String suffixHistory) {
             WordState state = new WordState(originalWord);
@@ -94,6 +95,51 @@ public class HomeController {
             return state;
         }
         
+        private java.util.List<SegmentResponse> buildSegments(String originalWord, String suffixHistory) {
+            java.util.List<SegmentResponse> segments = new java.util.ArrayList<>();
+            WordState state = new WordState(originalWord);
+
+            java.util.List<Integer> boundaries = new java.util.ArrayList<>();
+            java.util.List<String> labels = new java.util.ArrayList<>();
+            boundaries.add(0);
+
+            if (suffixHistory != null && !suffixHistory.isBlank()) {
+                String[] steps = suffixHistory.split(",");
+                for (String step : steps) {
+                    String before = state.getText();
+                    String[] parts = step.split(":");
+                    String name = parts[0];
+                    char lastVowel = TurkishHelper.findLastVowel(state);
+
+                    if (name.equals("possessive")) {
+                        SuffixManager.addPossessive(state, lastVowel, Integer.parseInt(parts[1]));
+                    } else if (name.equals("copula")) {
+                        SuffixManager.addCopula(state, lastVowel, Integer.parseInt(parts[1]));
+                    } else {
+                        int code = suffixCodes.get(name);
+                        SuffixManager.conjugateIt(state, code, lastVowel, null);
+                    }
+
+                    String after = state.getText();
+                    int rawPrefix = commonPrefixLength(before, after);
+                    int boundary = (rawPrefix == before.length() - 1) ? rawPrefix + 1 : rawPrefix;
+                    boundaries.add(boundary);
+                    labels.add(name);
+                }
+            }
+
+            String finalWord = state.getText();
+            boundaries.add(finalWord.length());
+
+            for (int i = 0; i < boundaries.size() - 1; i++) {
+                String text = finalWord.substring(boundaries.get(i), boundaries.get(i + 1));
+                String label = (i == 0) ? "stem" : labels.get(i - 1);
+                segments.add(new SegmentResponse(text, label));
+            }
+
+            return segments;
+        }
+        
         private void applyStep(HttpSession session, String step) {
             Long sessionId = (Long) session.getAttribute("sessionId");
             DeclensionSession record = repository.findById(sessionId).orElseThrow();
@@ -107,13 +153,24 @@ public class HomeController {
             session.setAttribute("wordState", state);
             syncSession(session, state);
         }
+        
+        private int commonPrefixLength(String a, String b) {
+            int max = Math.min(a.length(), b.length());
+            int i = 0;
+            while (i < max && a.charAt(i) == b.charAt(i)) {
+                i++;
+            }
+            return i;
+        }
     
     
         @GetMapping("/api/word")
         @ResponseBody
         public WordStateResponse getWordJson(HttpSession session) {
             WordState state = (WordState) session.getAttribute("wordState");
-            return buildResponse(state);
+            Long sessionId = (Long) session.getAttribute("sessionId");
+            DeclensionSession record = repository.findById(sessionId).orElseThrow();
+            return buildResponse(state, record.getOriginalWord(), record.getSuffixHistory());
         }
         
         @PostMapping("/api/suffix/{name}")
@@ -121,7 +178,9 @@ public class HomeController {
         public WordStateResponse applySuffixJson(@PathVariable String name, HttpSession session) {
             applyStep(session, name);
             WordState state = (WordState) session.getAttribute("wordState");
-            return buildResponse(state);
+            Long sessionId = (Long) session.getAttribute("sessionId");
+            DeclensionSession record = repository.findById(sessionId).orElseThrow();
+            return buildResponse(state, record.getOriginalWord(), record.getSuffixHistory());
         }
     
     
