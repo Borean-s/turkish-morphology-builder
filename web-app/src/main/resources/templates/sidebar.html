@@ -2,7 +2,10 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body>
     <div th:fragment="sidebar" class="sidebar">
-        <div class="logo">MorphoTR</div>
+        <div class="logo"> <img src="/images/morpho_logo.png" height="55"> MorphoTR
+			
+		</div>
+		
         <h3>History</h3>
         <div class="sidebar-item" th:each="item : ${history}">
             <a th:href="@{/session/{id}(id=${item.id})}" th:text="${item.currentWord}">word</a>

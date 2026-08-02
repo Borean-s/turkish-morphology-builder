@@ -119,6 +119,7 @@ static void addPlural(WordState word, char v, Scanner s){
 static void addGenitive(WordState word, char v, Scanner s){
 	word.genitive = true;
 	applyLinkingY(word);
+	softenFinalConsonant(word);
 	
 	if(TurkishHelper.EndingWithVowel(word)) {
 		word.text += "n";
