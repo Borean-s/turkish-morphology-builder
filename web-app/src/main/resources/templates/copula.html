@@ -8,7 +8,7 @@
 </head>
 <body>
     <div th:replace="~{sidebar :: sidebar}"></div>
-
+	<div th:replace="~{github-link :: githublink}"></div>
     <div class="main">
 		<h1 class="word-display">
 		            <span th:each="seg : ${segments}" th:text="${seg.text}" th:class="'seg-' + ${seg.label}"></span>
@@ -30,7 +30,7 @@
             </form>
         </div>
     </div>
-
+	
 </body>
 <script>
         if (sessionStorage.getItem('colorMode') === 'true') {

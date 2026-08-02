@@ -9,6 +9,8 @@
 <body>
 
     <div th:replace="~{sidebar :: sidebar}"></div>
+	<div th:replace="~{github-link :: githublink}"></div>
+	<div id="tooltip" class="tooltip"></div>
 
     <div class="main">
 		<h1 id="word-display" class="word-display">
@@ -65,6 +67,34 @@
             copula: /*[[${canCopula}]]*/ true
         };
 		
+		const suffixInfo = {
+		            plural: ['Plural', 'Marks more than one.'],
+		            accusative: ['Accusative', 'Marks the direct object of a verb.'],
+		            dative: ['Dative', "Indicates direction or motion — 'to'."],
+		            locative: ['Locative', "Indicates location — 'at/in'."],
+		            ablative: ['Ablative', "Indicates origin — 'from'."],
+		            instrumental: ['Instrumental', "Indicates means — 'with/by'."],
+		            genitive: ['Genitive', "Indicates possession — 'of'."],
+		            past: ['Past', 'Marks past tense.'],
+		            possessive: ['Possessive', 'Marks ownership.'],
+		            copula: ['Copula', "Links the subject to a state — 'to be'."]
+		        };
+
+		        const tooltip = document.getElementById('tooltip');
+
+		        function showTooltip(label, x, y) {
+		            const info = suffixInfo[label];
+		            if (!info) return;
+		            tooltip.innerHTML = '<strong>' + info[0] + '</strong>' + info[1];
+		            tooltip.style.left = (x + 14) + 'px';
+		            tooltip.style.top = (y + 14) + 'px';
+		            tooltip.style.display = 'block';
+		        }
+
+		        function hideTooltip() {
+		            tooltip.style.display = 'none';
+		        }
+		
 		const colorCheckbox = document.getElementById('color-toggle');
 		        colorCheckbox.checked = sessionStorage.getItem('colorMode') === 'true';
 		        document.getElementById('word-display').classList.toggle('color-mode', colorCheckbox.checked);
@@ -111,12 +141,17 @@
 		function renderWord(segments) {
 		            const wordEl = document.getElementById('word-display');
 		            wordEl.innerHTML = '';
-		            segments.forEach(seg => {
-		                const span = document.createElement('span');
-		                span.textContent = seg.text;
-		                span.className = 'seg-' + seg.label;
-		                wordEl.appendChild(span);
-		            });
+					segments.forEach(seg => {
+					                const span = document.createElement('span');
+					                span.textContent = seg.text;
+					                span.className = 'seg-' + seg.label;
+					                if (seg.label !== 'stem') {
+					                    span.addEventListener('mouseenter', e => showTooltip(seg.label, e.clientX, e.clientY));
+					                    span.addEventListener('mousemove', e => showTooltip(seg.label, e.clientX, e.clientY));
+					                    span.addEventListener('mouseleave', hideTooltip);
+					                }
+					                wordEl.appendChild(span);
+					            });
 
 		            const breakdownEl = document.getElementById('breakdown');
 		            breakdownEl.innerHTML = '';

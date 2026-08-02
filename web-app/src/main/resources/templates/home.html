@@ -9,11 +9,13 @@
 </head>
 <body>
     <div th:replace="~{sidebar :: sidebar}"></div>
+	<div th:replace="~{github-link :: githublink}"></div>
 
     <div class="main">
 		<form action="/start" method="post">
 		            <input type="text" id="word" name="word" class="word-input" placeholder="enter a turkish word">
 		        </form>
     </div>
+	
 </body>
 </html>
