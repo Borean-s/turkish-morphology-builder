@@ -205,8 +205,8 @@ public class HomeController {
     }
 
     @GetMapping("/")
-    public String home(Model model) {
-        model.addAttribute("history", repository.findAllByOrderByIdDesc());
+    public String home(HttpSession session, Model model) {
+        model.addAttribute("history", repository.findAllByBrowserSessionIdOrderByIdDesc(session.getId()));
         return "home";
     }
 
@@ -214,12 +214,12 @@ public class HomeController {
     public String start(@RequestParam String word, HttpSession session) {
         WordState state = new WordState(word);
         session.setAttribute("wordState", state);
-       
 
         DeclensionSession record = new DeclensionSession();
         record.setOriginalWord(word);
         record.setCurrentWord(word);
         record.setCreatedAt(java.time.LocalDateTime.now());
+        record.setBrowserSessionId(session.getId());
         repository.save(record);
 
         session.setAttribute("sessionId", record.getId());
@@ -246,8 +246,7 @@ public class HomeController {
         model.addAttribute("canPossessive", TurkishRules.canAddPossessive(state));
         model.addAttribute("canCopula", TurkishRules.canAddCopula(state));
 
-        model.addAttribute("history", repository.findAllByOrderByIdDesc());
-
+        model.addAttribute("history", repository.findAllByBrowserSessionIdOrderByIdDesc(session.getId()));
         return "word";
     }
     
@@ -284,7 +283,7 @@ public class HomeController {
         Long sessionId = (Long) session.getAttribute("sessionId");
         DeclensionSession record = repository.findById(sessionId).orElseThrow();
         model.addAttribute("segments", buildSegments(record.getOriginalWord(), record.getSuffixHistory()));
-        model.addAttribute("history", repository.findAllByOrderByIdDesc());
+        model.addAttribute("history", repository.findAllByBrowserSessionIdOrderByIdDesc(session.getId()));
         return "possessive";
     }
 
@@ -304,7 +303,7 @@ public class HomeController {
         Long sessionId = (Long) session.getAttribute("sessionId");
         DeclensionSession record = repository.findById(sessionId).orElseThrow();
         model.addAttribute("segments", buildSegments(record.getOriginalWord(), record.getSuffixHistory()));
-        model.addAttribute("history", repository.findAllByOrderByIdDesc());
+        model.addAttribute("history", repository.findAllByBrowserSessionIdOrderByIdDesc(session.getId()));
         return "copula";
     }
 

@@ -15,6 +15,7 @@ public class DeclensionSession {
 
     private String originalWord;
     private String currentWord;
+    private String browserSessionId;
 
     private boolean thirdPossessive;
     private boolean genitive;
@@ -56,4 +57,6 @@ public class DeclensionSession {
     public void setHasPossessive(boolean hasPossessive) { this.hasPossessive = hasPossessive; }
     public String getSuffixHistory() { return suffixHistory; }
     public void setSuffixHistory(String suffixHistory) { this.suffixHistory = suffixHistory; }
+    public String getBrowserSessionId() { return browserSessionId; }
+    public void setBrowserSessionId(String browserSessionId) { this.browserSessionId = browserSessionId; }
 }
