@@ -3,19 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <title>Turkish Morphology Builder</title>
-	<link rel="icon" type="image/png" th:href="@{/images/morpho_logo.png}">
+    <link rel="icon" type="image/png" th:href="@{/images/morpho_logo.png}">
     <link rel="stylesheet" th:href="@{/css/style.css}">
-	
 </head>
 <body>
     <div th:replace="~{sidebar :: sidebar}"></div>
-	<div th:replace="~{github-link :: githublink}"></div>
+    <div th:replace="~{github-link :: githublink}"></div>
 
     <div class="main">
-		<form action="/start" method="post">
-		            <input type="text" id="word" name="word" class="word-input" placeholder="enter a turkish word">
-		        </form>
-    </div>
-	
+		<div class="input-row">
+		            <form action="/start" method="post" id="start-form">
+		                <input type="text" id="word" name="word" class="word-input" placeholder="enter a turkish word">
+		            </form>
+		            <div class="char-wrapper">
+		                <button type="button" id="char-panel-toggle" class="char-toggle">TR</button>
+
+		        <div id="char-panel" class="char-panel">
+            <button type="button" class="char-btn" data-char="ü">ü</button>
+            <button type="button" class="char-btn" data-char="ö">ö</button>
+            <button type="button" class="char-btn" data-char="ı">ı</button>
+            <button type="button" class="char-btn" data-char="ç">ç</button>
+            <button type="button" class="char-btn" data-char="ş">ş</button>
+            <button type="button" class="char-btn" data-char="ğ">ğ</button>
+            <button type="button" class="char-btn" data-char="î">î</button>
+            <button type="button" class="char-btn" data-char="â">â</button>
+			<button type="button" class="char-btn" data-char="û">û</button>
+			        </div>
+			            </div>
+			        </div>
+
+    <script>
+        document.getElementById('char-panel-toggle').addEventListener('click', function() {
+            document.getElementById('char-panel').classList.toggle('open');
+        });
+
+        document.querySelectorAll('.char-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const input = document.getElementById('word');
+                const char = this.dataset.char;
+                const start = input.selectionStart;
+                const end = input.selectionEnd;
+                const before = input.value.substring(0, start);
+                const after = input.value.substring(end);
+
+                input.value = before + char + after;
+                input.focus();
+                input.setSelectionRange(start + char.length, start + char.length);
+            });
+        });
+    </script>
 </body>
 </html>
