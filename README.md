@@ -1,56 +1,55 @@
-MorphoTR
------------
-An interactive Turkish morphology builder written in Java.
-MorphoTR allows users to build Turkish words by adding grammatical suffixes while respecting Turkish morphophonological rules. The long-term goal is to turn this engine into an interactive web application using Spring Boot.
------------
-Tech used: 
+# MorphoTR — Turkish Suffix Stacker
 
--Java
+Learn Turkish nouns suffix by suffix with live grammar rules.
 
--Spring Boot
+An interactive web app for building and visualizing Turkish noun declensions.
 
--Maven
+**Live site:** https://your-render-url.onrender.com
 
--Thymeleaf
+## Features
 
--MySQL 
+- Interactive suffix builder with live-updating word display (no page reloads)
+- Grammar-aware UI — buttons disable automatically when a suffix is grammatically invalid
+- Full morphological breakdown (`stem + suffix (label)`) for every generated word
+- Multi-level undo, rebuilt from a persisted suffix history (not just in-memory state)
+- Per-visitor history sidebar — reopen, continue, or delete past sessions
+- Handles real Turkish grammar edge cases: consonant softening (k→ğ, p→b), and irregular pronouns (o/şu/bu, su/ne, ben/sen)
+- Optional color-coded suffix highlighting and hover tooltips with grammar explanations
+- Turkish special-character input panel for non-Turkish keyboards
+
+## Tech Stack
+
+**Backend**
+- Java 21
+- Spring Boot 4.1 (Spring Web, Spring Data JPA)
+- Maven
+- Hibernate / MySQL (hosted on Aiven)
+
+**Frontend**
+- Thymeleaf
+- JavaScript
+- CSS 
+
+**Infrastructure**
+- Docker 
+- Deployed on Render
 
 
------------
-Example:
+## Project Structure
+turkish-morphology-builder/
+├── console-app/ Original Java console version (grammar engine origin)
+└── web-app/ Spring Boot web application
 
+## Running Locally
 
-input:
+Requires Java 21 and a MySQL-compatible database.
 
-adam
+```bash
+cd web-app
+export DB_URL=jdbc:mysql://<host>:<port>/<database>
+export DB_USERNAME=<username>
+export DB_PASSWORD=<password>
+mvn spring-boot:run
+```
 
-Operations:
-
-Plural
-↓
-
-Accusative
-
-Output:
-
-adamları
----
-Morphological breakdown:
-
-adam + lar (Plural) + ı (Accusative)
-
------------
-Goals:
-The primary goal of this project is self-educational.
-
-Intended to deepen my understanding of:
-
--Java
-
--Object-Oriented Programming
-
--Spring Boot
-
--Web Development
-
--Database Design
+Then visit `http://localhost:8080`.
