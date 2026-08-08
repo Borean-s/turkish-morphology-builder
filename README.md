@@ -36,8 +36,11 @@ An interactive web app for building and visualizing Turkish noun declensions.
 
 
 ## Project Structure
+
 turkish-morphology-builder/
+
 ├── console-app/ Original Java console version (grammar engine origin)
+
 └── web-app/ Spring Boot web application
 
 ## Running Locally
